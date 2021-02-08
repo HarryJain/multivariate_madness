@@ -1,0 +1,25 @@
+---
+title: "Data"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+This study looks at NCAA Men's Basketball data from the past five seasons (2014-15 to 2018-19) in order to maintain recency and applicability to future tournaments. The data for this study was obtained using the *NCAA Mens Basketball v7 API* on *sportradar.com* with a free account. It was parsed using *Python* to scrape and clean the *JSON* output provided and analyzed using *R*. The statistics encompass a great variety of team categories and performance metrics---most of which are per-game averages---and are generally broken down into the following categories:
+
+  * **Basic categories (categorical/NA):** team name, conference, conference type
+  * **Regular season team/offensive statistics (continuous):** points, rebounds, assists, steals, blocks, turnovers, blocked attempts, personal fouls, flagrant fouls, efficiency, true shooting percentage, fast break points, points off turnovers, points in the paint, second chance points 
+  * **Regular season opponent/defensive statistics (continuous):** opponent points, rebounds, assists, turnovers, blocked attempts, personal fouls, flagrant fouls, efficiency, true shooting percentage, fast break points, points off turnovers, points in the paint, second chance points 
+  * **Composite regular season statistics (continuous):** adjusted winning percentage, opponent winning percentage, strength of schedule, RPI
+  * **Tournament categories (categorical):** seed, tournament bid type, round reached
+  * **General tournament success statistics (continuous):** games played, average point differential
+  * **Tournament team/offensive statistics (continuous):** tournament points, assists, fast break
+  points, second chance points, personal fouls, flagrant fouls, blocked attempts
+  * **Tournament opponent/defensive statistics (continuous):** tournament opponent efficiency, field goal
+  percentage, points, assists, points in the paint, blocked attempts, personal fouls, flagrant fouls
+  
+By using and combining these statistics, we are able to use a variety of multivariate statistical methods and make many insights regarding tournament results and team successs. The completeness of the data confirmed that we did not have any major sources of error, though it does make the output and interpretations quite long. But this is also what allows for the comprehensiveness of this analysis.
+
+Notably, not all 340 possible teams from these 5 tournaments had complete data (some older, small conference teams lacked a few composite statistics), so we will instead look at the 271 teams that did. This should not greatly affect our results, though it will place slightly more emphasis on large conference, low seed teams **(note: low seed for this study means the favored teams such as those with 1 seeds, not low in terms of performance)**.

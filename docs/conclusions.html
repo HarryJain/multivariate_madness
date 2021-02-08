@@ -1,0 +1,405 @@
+<!DOCTYPE html>
+
+<html>
+
+<head>
+
+<meta charset="utf-8" />
+<meta name="generator" content="pandoc" />
+<meta http-equiv="X-UA-Compatible" content="IE=EDGE" />
+
+
+
+
+<title>Conclusions and Discussion</title>
+
+<script src="site_libs/header-attrs-2.6/header-attrs.js"></script>
+<script src="site_libs/jquery-1.11.3/jquery.min.js"></script>
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<link href="site_libs/bootstrap-3.3.5/css/cosmo.min.css" rel="stylesheet" />
+<script src="site_libs/bootstrap-3.3.5/js/bootstrap.min.js"></script>
+<script src="site_libs/bootstrap-3.3.5/shim/html5shiv.min.js"></script>
+<script src="site_libs/bootstrap-3.3.5/shim/respond.min.js"></script>
+<script src="site_libs/navigation-1.1/tabsets.js"></script>
+<link href="site_libs/highlightjs-9.12.0/default.css" rel="stylesheet" />
+<script src="site_libs/highlightjs-9.12.0/highlight.js"></script>
+
+<style type="text/css">
+  code{white-space: pre-wrap;}
+  span.smallcaps{font-variant: small-caps;}
+  span.underline{text-decoration: underline;}
+  div.column{display: inline-block; vertical-align: top; width: 50%;}
+  div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+  ul.task-list{list-style: none;}
+    </style>
+
+<style type="text/css">code{white-space: pre;}</style>
+<style type="text/css">
+  pre:not([class]) {
+    background-color: white;
+  }
+</style>
+<script type="text/javascript">
+if (window.hljs) {
+  hljs.configure({languages: []});
+  hljs.initHighlightingOnLoad();
+  if (document.readyState && document.readyState === "complete") {
+    window.setTimeout(function() { hljs.initHighlighting(); }, 0);
+  }
+}
+</script>
+
+
+
+<style type="text/css">
+h1 {
+  font-size: 34px;
+}
+h1.title {
+  font-size: 38px;
+}
+h2 {
+  font-size: 30px;
+}
+h3 {
+  font-size: 24px;
+}
+h4 {
+  font-size: 18px;
+}
+h5 {
+  font-size: 16px;
+}
+h6 {
+  font-size: 12px;
+}
+.table th:not([align]) {
+  text-align: left;
+}
+</style>
+
+
+
+
+
+<style type = "text/css">
+.main-container {
+  max-width: 940px;
+  margin-left: auto;
+  margin-right: auto;
+}
+code {
+  color: inherit;
+  background-color: rgba(0, 0, 0, 0.04);
+}
+img {
+  max-width:100%;
+}
+.tabbed-pane {
+  padding-top: 12px;
+}
+.html-widget {
+  margin-bottom: 20px;
+}
+button.code-folding-btn:focus {
+  outline: none;
+}
+summary {
+  display: list-item;
+}
+</style>
+
+
+<style type="text/css">
+/* padding for bootstrap navbar */
+body {
+  padding-top: 51px;
+  padding-bottom: 40px;
+}
+/* offset scroll position for anchor links (for fixed navbar)  */
+.section h1 {
+  padding-top: 56px;
+  margin-top: -56px;
+}
+.section h2 {
+  padding-top: 56px;
+  margin-top: -56px;
+}
+.section h3 {
+  padding-top: 56px;
+  margin-top: -56px;
+}
+.section h4 {
+  padding-top: 56px;
+  margin-top: -56px;
+}
+.section h5 {
+  padding-top: 56px;
+  margin-top: -56px;
+}
+.section h6 {
+  padding-top: 56px;
+  margin-top: -56px;
+}
+.dropdown-submenu {
+  position: relative;
+}
+.dropdown-submenu>.dropdown-menu {
+  top: 0;
+  left: 100%;
+  margin-top: -6px;
+  margin-left: -1px;
+  border-radius: 0 6px 6px 6px;
+}
+.dropdown-submenu:hover>.dropdown-menu {
+  display: block;
+}
+.dropdown-submenu>a:after {
+  display: block;
+  content: " ";
+  float: right;
+  width: 0;
+  height: 0;
+  border-color: transparent;
+  border-style: solid;
+  border-width: 5px 0 5px 5px;
+  border-left-color: #cccccc;
+  margin-top: 5px;
+  margin-right: -10px;
+}
+.dropdown-submenu:hover>a:after {
+  border-left-color: #ffffff;
+}
+.dropdown-submenu.pull-left {
+  float: none;
+}
+.dropdown-submenu.pull-left>.dropdown-menu {
+  left: -100%;
+  margin-left: 10px;
+  border-radius: 6px 0 6px 6px;
+}
+</style>
+
+<script>
+// manage active state of menu based on current page
+$(document).ready(function () {
+  // active menu anchor
+  href = window.location.pathname
+  href = href.substr(href.lastIndexOf('/') + 1)
+  if (href === "")
+    href = "index.html";
+  var menuAnchor = $('a[href="' + href + '"]');
+
+  // mark it active
+  menuAnchor.parent().addClass('active');
+
+  // if it's got a parent navbar menu mark it active as well
+  menuAnchor.closest('li.dropdown').addClass('active');
+});
+</script>
+
+<!-- tabsets -->
+
+<style type="text/css">
+.tabset-dropdown > .nav-tabs {
+  display: inline-table;
+  max-height: 500px;
+  min-height: 44px;
+  overflow-y: auto;
+  background: white;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+}
+
+.tabset-dropdown > .nav-tabs > li.active:before {
+  content: "";
+  font-family: 'Glyphicons Halflings';
+  display: inline-block;
+  padding: 10px;
+  border-right: 1px solid #ddd;
+}
+
+.tabset-dropdown > .nav-tabs.nav-tabs-open > li.active:before {
+  content: "&#xe258;";
+  border: none;
+}
+
+.tabset-dropdown > .nav-tabs.nav-tabs-open:before {
+  content: "";
+  font-family: 'Glyphicons Halflings';
+  display: inline-block;
+  padding: 10px;
+  border-right: 1px solid #ddd;
+}
+
+.tabset-dropdown > .nav-tabs > li.active {
+  display: block;
+}
+
+.tabset-dropdown > .nav-tabs > li > a,
+.tabset-dropdown > .nav-tabs > li > a:focus,
+.tabset-dropdown > .nav-tabs > li > a:hover {
+  border: none;
+  display: inline-block;
+  border-radius: 4px;
+  background-color: transparent;
+}
+
+.tabset-dropdown > .nav-tabs.nav-tabs-open > li {
+  display: block;
+  float: none;
+}
+
+.tabset-dropdown > .nav-tabs > li {
+  display: none;
+}
+</style>
+
+<!-- code folding -->
+
+
+
+
+</head>
+
+<body>
+
+
+<div class="container-fluid main-container">
+
+
+
+
+<div class="navbar navbar-default  navbar-fixed-top" role="navigation">
+  <div class="container">
+    <div class="navbar-header">
+      <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar">
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+      <a class="navbar-brand" href="index.html">Multivariate Madness</a>
+    </div>
+    <div id="navbar" class="navbar-collapse collapse">
+      <ul class="nav navbar-nav">
+        <li>
+  <a href="index.html">Introduction</a>
+</li>
+<li>
+  <a href="design.html">Design</a>
+</li>
+<li>
+  <a href="data.html">Data</a>
+</li>
+<li>
+  <a href="summary.html">Summary Statistics</a>
+</li>
+<li>
+  <a href="factor_analysis.html">Factor Analysis</a>
+</li>
+<li>
+  <a href="ordination.html">Ordination</a>
+</li>
+<li>
+  <a href="cluster_analysis.html">Cluster Analysis</a>
+</li>
+<li>
+  <a href="conclusions.html">Conclusions</a>
+</li>
+<li>
+  <a href="acknowledgements.html">Final Thoughts</a>
+</li>
+      </ul>
+      <ul class="nav navbar-nav navbar-right">
+        
+      </ul>
+    </div><!--/.nav-collapse -->
+  </div><!--/.container -->
+</div><!--/.navbar -->
+
+<div class="fluid-row" id="header">
+
+
+
+<h1 class="title toc-ignore">Conclusions and Discussion</h1>
+
+</div>
+
+
+<p>Overall, our multivariate analyses were very successful, with valid data and interesting results. In contrast to the perceived randomness of the tournament, we were able to deduce strong patterns according to expected trends, with higher seeds and better regular season teams performing better in the tournament (especially in the case of 1 seeds). Additionally, we saw a lot of Cinderella teams coming from 7, 10, and 11 seeds, who generally played difficult schedules in large conferences. In terms of variables, we saw that advanced offensive statistics like true shooting percentage and efficiency were generally the best predictors of success, reflecting the offensively-dominated modern game. Thus, while certainly not a silver bullet for predicting March Madness results, we were able to paint an illustrative picture of the tournament as a whole, encompassing the teams, the variables, the seeds, and the rounds.</p>
+<div id="factor-analysis" class="section level2">
+<h2>Factor Analysis</h2>
+<p>The factor analysis was relatively successful, with high suitability of our data and reasonably consistent and strong factors. The interpretations were relatively clear and illustrated interesting relationships among our indicators. Most notably, the results affirmed strong connections between overall regular season success and overall tournament success, continuing to undermine the narrative of fully random tournament results. While PCA suggested <span class="math inline">\(5\)</span> latent factors, we could have potentially tried only <span class="math inline">\(3\)</span> factors, as the interpretations for the final <span class="math inline">\(2\)</span> were much less clear and the correlations much weaker; however, the existence of the “aggression” factor and its negative correlation with tournament success was quite informative, making a case for these less prominent factors.</p>
+</div>
+<div id="ordination" class="section level2">
+<h2>Ordination</h2>
+<p>The ordination study was also quite successful, demonstrating clear and informative plots of our team groupings in two and three dimensions. Furthermore, we saw very strong correlations with our continuous team statistics, verifying their use as predictors and also the validity of our plots themselves. The most useful results probably came from the two-dimensional non-metric multidimensional scaling, which was slightly more linear and connected than the correspondence analysis results. The fitting of continuous variable contour plots only furthered this connection and demonstrated the heavy interactions between regular season statistics and tournament success. Thus, while not a direct modeling technique itself, ordination has allowed us to observe and analyze useful trends across several factors.</p>
+</div>
+<div id="cluster-analysis" class="section level2">
+<h2>Cluster Analysis</h2>
+<p>Continuing our pattern of success, the cluster analysis was also insightful, with each chosen technique providing interesting yet different results and conclusions. The most useful investigations probably came from the outlier distinction of single linkage hierarchial clustering, which was able to determine potential favorites, Cinderellas, etc., and from the k-means analysis including all of the teams. While these results are certainly not a conclusive solution to predicting every tournament, there are clear correlations between different types of teams, and the resulting clusters seem to have significant predictive ability.</p>
+</div>
+<div id="points-for-further-analysis" class="section level1">
+<h1>Points for Further Analysis</h1>
+<p>Despite the aforementioned success of our study, there is always room for improvement and further investigation. In fact, this is exactly what justifies further multivariate analysis of this data. Generally, the main desired improvement would be to find more unexpected results to explain more of the tournament randomness. This could probably be done by filtering out the “noise” of similar teams who did not perform well and maybe trying to use these techniques exclusively on the teams in question (Cinderellas, busts, etc.). Additionally, we may want to look at a larger pool of teams across more years, since it is almost always good to have more variables/data to look at. However, the chosen pool of data definitely had more than enough teams to deduce trends, and the recency of teams allows for pertinent observations like the dominance of offensive statistics. Nevertheless, doing further analysis with more data would only further illustrate these results, trends, and even differences across time.</p>
+<div id="factor-analysis-1" class="section level2">
+<h2>Factor Analysis</h2>
+<p>In terms of downsides, many of the latent factors could be deduced using basic logic, and applying factor analysis in this manner does not give us any insight into the individual teams and their sources of success (like cluster analysis does). In the future, it might be informative to try different (and probably smaller) subsets of variables to yield more detailed, unexpected conclusions in fewer latent factors. However, our results were not entirely expected and hence yielded some unique interpretations. Thus, factor analysis for this NCAAM basketball data was generally a success, and looking into some alternate approaches with this technique is definitely justified in the future.</p>
+</div>
+<div id="ordination-1" class="section level2">
+<h2>Ordination</h2>
+<p>Similar to the results of factor analysis, a lot of the observations were trivial, namely the fact that better statistics led to low seeds and higher tournament success. However, the specific groupings of seeds, namely for the Cinderella 7/11 seeds, along with the direction of the “snaking” effects, were actually very informative. In the future, it may be interesting to look at other specific subgroups, such as successful Cinderella teams or those who were upset early in the tournament. Furthermore, this is also definitely a technique that would benefit from even more years of data (yielding larger and more representative groups). Finally, we could potentially use this technique in conjunction with the results of cluster analysis to determine relationships between the clusters. Given the insights from this analysis, ordination is also a technique worth diving deeper into for NCAAM basketball data.</p>
+</div>
+<div id="cluster-analysis-1" class="section level2">
+<h2>Cluster Analysis</h2>
+<p>For cluster analysis, the main limitation came in the aforementioned “noise” within each group, as almost all of them included a relatively large amount of mediocrely performing teams that did not provide much predictive power. To solve this, we may want to look at a smaller set of teams that we are really interested in (namely those that performed surprisingly, either good or bad). Also, it may also be advantageous to look at different or larger groups in hierarchial clustering (namely with single linkage), as well as to analyze the statistical properties of each cluster. Finally, we could consider adding in notable teams from other years to see which group they would fall into and consequently gauge the predictive power of our clusters. In the end, however, this study was highly successful in establishing several core properties of cluster analysis on NCAAM basketball data and thus more than justified further work on the subject.</p>
+</div>
+</div>
+
+
+
+
+</div>
+
+<script>
+
+// add bootstrap table styles to pandoc tables
+function bootstrapStylePandocTables() {
+  $('tr.odd').parent('tbody').parent('table').addClass('table table-condensed');
+}
+$(document).ready(function () {
+  bootstrapStylePandocTables();
+});
+
+
+</script>
+
+<!-- tabsets -->
+
+<script>
+$(document).ready(function () {
+  window.buildTabsets("TOC");
+});
+
+$(document).ready(function () {
+  $('.tabset-dropdown > .nav-tabs > li').click(function () {
+    $(this).parent().toggleClass('nav-tabs-open')
+  });
+});
+</script>
+
+<!-- code folding -->
+
+
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+  (function () {
+    var script = document.createElement("script");
+    script.type = "text/javascript";
+    script.src  = "https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML";
+    document.getElementsByTagName("head")[0].appendChild(script);
+  })();
+</script>
+
+</body>
+</html>

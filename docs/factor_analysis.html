@@ -1,0 +1,1419 @@
+<!DOCTYPE html>
+
+<html>
+
+<head>
+
+<meta charset="utf-8" />
+<meta name="generator" content="pandoc" />
+<meta http-equiv="X-UA-Compatible" content="IE=EDGE" />
+
+
+
+
+<title>Factor Analysis</title>
+
+<script src="site_libs/header-attrs-2.6/header-attrs.js"></script>
+<script src="site_libs/jquery-1.11.3/jquery.min.js"></script>
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<link href="site_libs/bootstrap-3.3.5/css/cosmo.min.css" rel="stylesheet" />
+<script src="site_libs/bootstrap-3.3.5/js/bootstrap.min.js"></script>
+<script src="site_libs/bootstrap-3.3.5/shim/html5shiv.min.js"></script>
+<script src="site_libs/bootstrap-3.3.5/shim/respond.min.js"></script>
+<script src="site_libs/navigation-1.1/tabsets.js"></script>
+<link href="site_libs/highlightjs-9.12.0/default.css" rel="stylesheet" />
+<script src="site_libs/highlightjs-9.12.0/highlight.js"></script>
+
+<style type="text/css">
+  code{white-space: pre-wrap;}
+  span.smallcaps{font-variant: small-caps;}
+  span.underline{text-decoration: underline;}
+  div.column{display: inline-block; vertical-align: top; width: 50%;}
+  div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+  ul.task-list{list-style: none;}
+    </style>
+
+<style type="text/css">code{white-space: pre;}</style>
+<style type="text/css">
+  pre:not([class]) {
+    background-color: white;
+  }
+</style>
+<script type="text/javascript">
+if (window.hljs) {
+  hljs.configure({languages: []});
+  hljs.initHighlightingOnLoad();
+  if (document.readyState && document.readyState === "complete") {
+    window.setTimeout(function() { hljs.initHighlighting(); }, 0);
+  }
+}
+</script>
+
+
+
+<style type="text/css">
+h1 {
+  font-size: 34px;
+}
+h1.title {
+  font-size: 38px;
+}
+h2 {
+  font-size: 30px;
+}
+h3 {
+  font-size: 24px;
+}
+h4 {
+  font-size: 18px;
+}
+h5 {
+  font-size: 16px;
+}
+h6 {
+  font-size: 12px;
+}
+.table th:not([align]) {
+  text-align: left;
+}
+</style>
+
+
+
+
+
+<style type = "text/css">
+.main-container {
+  max-width: 940px;
+  margin-left: auto;
+  margin-right: auto;
+}
+code {
+  color: inherit;
+  background-color: rgba(0, 0, 0, 0.04);
+}
+img {
+  max-width:100%;
+}
+.tabbed-pane {
+  padding-top: 12px;
+}
+.html-widget {
+  margin-bottom: 20px;
+}
+button.code-folding-btn:focus {
+  outline: none;
+}
+summary {
+  display: list-item;
+}
+</style>
+
+
+<style type="text/css">
+/* padding for bootstrap navbar */
+body {
+  padding-top: 51px;
+  padding-bottom: 40px;
+}
+/* offset scroll position for anchor links (for fixed navbar)  */
+.section h1 {
+  padding-top: 56px;
+  margin-top: -56px;
+}
+.section h2 {
+  padding-top: 56px;
+  margin-top: -56px;
+}
+.section h3 {
+  padding-top: 56px;
+  margin-top: -56px;
+}
+.section h4 {
+  padding-top: 56px;
+  margin-top: -56px;
+}
+.section h5 {
+  padding-top: 56px;
+  margin-top: -56px;
+}
+.section h6 {
+  padding-top: 56px;
+  margin-top: -56px;
+}
+.dropdown-submenu {
+  position: relative;
+}
+.dropdown-submenu>.dropdown-menu {
+  top: 0;
+  left: 100%;
+  margin-top: -6px;
+  margin-left: -1px;
+  border-radius: 0 6px 6px 6px;
+}
+.dropdown-submenu:hover>.dropdown-menu {
+  display: block;
+}
+.dropdown-submenu>a:after {
+  display: block;
+  content: " ";
+  float: right;
+  width: 0;
+  height: 0;
+  border-color: transparent;
+  border-style: solid;
+  border-width: 5px 0 5px 5px;
+  border-left-color: #cccccc;
+  margin-top: 5px;
+  margin-right: -10px;
+}
+.dropdown-submenu:hover>a:after {
+  border-left-color: #ffffff;
+}
+.dropdown-submenu.pull-left {
+  float: none;
+}
+.dropdown-submenu.pull-left>.dropdown-menu {
+  left: -100%;
+  margin-left: 10px;
+  border-radius: 6px 0 6px 6px;
+}
+</style>
+
+<script>
+// manage active state of menu based on current page
+$(document).ready(function () {
+  // active menu anchor
+  href = window.location.pathname
+  href = href.substr(href.lastIndexOf('/') + 1)
+  if (href === "")
+    href = "index.html";
+  var menuAnchor = $('a[href="' + href + '"]');
+
+  // mark it active
+  menuAnchor.parent().addClass('active');
+
+  // if it's got a parent navbar menu mark it active as well
+  menuAnchor.closest('li.dropdown').addClass('active');
+});
+</script>
+
+<!-- tabsets -->
+
+<style type="text/css">
+.tabset-dropdown > .nav-tabs {
+  display: inline-table;
+  max-height: 500px;
+  min-height: 44px;
+  overflow-y: auto;
+  background: white;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+}
+
+.tabset-dropdown > .nav-tabs > li.active:before {
+  content: "";
+  font-family: 'Glyphicons Halflings';
+  display: inline-block;
+  padding: 10px;
+  border-right: 1px solid #ddd;
+}
+
+.tabset-dropdown > .nav-tabs.nav-tabs-open > li.active:before {
+  content: "&#xe258;";
+  border: none;
+}
+
+.tabset-dropdown > .nav-tabs.nav-tabs-open:before {
+  content: "";
+  font-family: 'Glyphicons Halflings';
+  display: inline-block;
+  padding: 10px;
+  border-right: 1px solid #ddd;
+}
+
+.tabset-dropdown > .nav-tabs > li.active {
+  display: block;
+}
+
+.tabset-dropdown > .nav-tabs > li > a,
+.tabset-dropdown > .nav-tabs > li > a:focus,
+.tabset-dropdown > .nav-tabs > li > a:hover {
+  border: none;
+  display: inline-block;
+  border-radius: 4px;
+  background-color: transparent;
+}
+
+.tabset-dropdown > .nav-tabs.nav-tabs-open > li {
+  display: block;
+  float: none;
+}
+
+.tabset-dropdown > .nav-tabs > li {
+  display: none;
+}
+</style>
+
+<!-- code folding -->
+
+
+
+
+</head>
+
+<body>
+
+
+<div class="container-fluid main-container">
+
+
+
+
+<div class="navbar navbar-default  navbar-fixed-top" role="navigation">
+  <div class="container">
+    <div class="navbar-header">
+      <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar">
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+      <a class="navbar-brand" href="index.html">Multivariate Madness</a>
+    </div>
+    <div id="navbar" class="navbar-collapse collapse">
+      <ul class="nav navbar-nav">
+        <li>
+  <a href="index.html">Introduction</a>
+</li>
+<li>
+  <a href="design.html">Design</a>
+</li>
+<li>
+  <a href="data.html">Data</a>
+</li>
+<li>
+  <a href="summary.html">Summary Statistics</a>
+</li>
+<li>
+  <a href="factor_analysis.html">Factor Analysis</a>
+</li>
+<li>
+  <a href="ordination.html">Ordination</a>
+</li>
+<li>
+  <a href="cluster_analysis.html">Cluster Analysis</a>
+</li>
+<li>
+  <a href="conclusions.html">Conclusions</a>
+</li>
+<li>
+  <a href="acknowledgements.html">Final Thoughts</a>
+</li>
+      </ul>
+      <ul class="nav navbar-nav navbar-right">
+        
+      </ul>
+    </div><!--/.nav-collapse -->
+  </div><!--/.container -->
+</div><!--/.navbar -->
+
+<div class="fluid-row" id="header">
+
+
+
+<h1 class="title toc-ignore">Factor Analysis</h1>
+
+</div>
+
+
+<p>As our first multivariate analysis method, we will use factor analysis to identify underlying factors causing correlations between our various statistics. We will consider the suitability of the data, determine an appropriate number of factors using PCA, and complete factor analysis itself with principal axis factoring and a varimax rotation.</p>
+<div id="suitability-of-data-and-correlations" class="section level2">
+<h2>Suitability of Data and Correlations</h2>
+<p>First, to use our data for factor analysis, we must remove all non-numerical values like team name and conferece. Then, to confirm the suitability of our data for factor analysis, we will consider the pairwise correlations between variables. Looking at the raw correlations (the bottom left of the correlation plot), these variables may initially seem too uncorrelated, with a large percentage of the values around <span class="math inline">\(0.1\)</span> and <span class="math inline">\(0.2\)</span>. However, we still see a fair amount of high correlations such as the <span class="math inline">\(0.89\)</span> correlation between efficiency and points. This makes sense, as offensive efficiency probably leads to more points, and vice versa (in fact, points scored is a part of the calculation for the offensive efficiency statistic). Most of the high and medium correlations are similarly logical but can still lead to interesting conclusions, such as the <span class="math inline">\(0.47\)</span> correlation between flagrant fouls and opponent flagrant fouls (an unfortunate reflection of vengeance between aggressive teams). On the other hand, some of them are less expected and maybe even unexplainable, like the <span class="math inline">\(-0.77\)</span> correlation between opponent blocked attempts and seed.</p>
+<p>While the raw correlation plot may be slightly concerning for factor analysis, a look at the visual correlation plot demonstrates a reasonable level of viability for dimensional reduction techniques. We see clusters of very high correlations, implying a high level of suitability for factor analysis, as each group probably has a latent factor driving these correlations. Furthermore, there are a few potentially unexpected relationships, like the high correlation between points and opponent points; thus, our factor analysis could still be exploratory in the sense of discovering new patterns beyond those previously hypothesized. This apparent viability is confirmed by our Kaiser-Meyer-Olkin measure of adequacy, which is approximately <span class="math inline">\(0.80\)</span>. According to our spectrum from class, this is squarely in the “Meritorious” region and hence implies our data is very suitable for factor analysis. Notably, achieving this value took a good deal of experimenting in terms of the chosen indicators—it was initially in the “Miserable” category and feeling quite inadequate :(—but was not achieved by any unreasonable inclusions; instead, it just forced our data into a large, comprehensive set of variables.</p>
+<p><img src="factor_analysis_files/figure-html/corrplot-1.png" width="672" style="display: block; margin: auto;" /></p>
+</div>
+<div id="principal-components-analysis" class="section level2">
+<h2>Principal Components Analysis</h2>
+<p>As the first step of our factor analysis, we will use principal components to determine an appropriate number of latent factors. While we use different methods to categorize our data in the factor analyses below, PCA will still give us a good idea of how many dimensions are needed to capture the variability of our data.</p>
+<p>To start, we perform the process of PCA using the <em>princomp</em> function on the correlation matrix. Printing out the summary of results, we see that the first <span class="math inline">\(5\)</span> components have eigenvalues substantially over <span class="math inline">\(1\)</span> and encompass about <span class="math inline">\(63\%\)</span> of the total variance, with the following components/eigenvalues (<span class="math inline">\(6\)</span>-<span class="math inline">\(11\)</span>) hovering around <span class="math inline">\(1\)</span> and raising the cumulative variance proportion to about <span class="math inline">\(80\%\)</span>. Choosing the number of components to keep is quite difficult due to this flattening out at relatively high eigenvalues, so we will also consider other methods.</p>
+<pre><code>## Importance of components:
+##                         Comp.1  Comp.2  Comp.3   Comp.4   Comp.5   Comp.6
+## Standard deviation     2.84357 2.72961 2.17219 1.768024 1.379470 1.159008
+## Proportion of Variance 0.20215 0.18627 0.11796 0.078148 0.047573 0.033583
+## Cumulative Proportion  0.20215 0.38842 0.50638 0.584523 0.632097 0.665679
+##                         Comp.7   Comp.8   Comp.9  Comp.10 Comp.11 Comp.12
+## Standard deviation     1.11821 1.055722 1.017937 0.994721 0.97468 0.87955
+## Proportion of Variance 0.03126 0.027864 0.025905 0.024737 0.02375 0.01934
+## Cumulative Proportion  0.69694 0.724803 0.750708 0.775444 0.79919 0.81853
+##                         Comp.13  Comp.14  Comp.15  Comp.16  Comp.17  Comp.18
+## Standard deviation     0.873475 0.793278 0.766266 0.717015 0.704961 0.690017
+## Proportion of Variance 0.019074 0.015732 0.014679 0.012853 0.012424 0.011903
+## Cumulative Proportion  0.837609 0.853341 0.868020 0.880873 0.893297 0.905200
+##                         Comp.19  Comp.20   Comp.21   Comp.22   Comp.23  Comp.24
+## Standard deviation     0.673113 0.657744 0.6039644 0.6017222 0.5312440 0.519422
+## Proportion of Variance 0.011327 0.010816 0.0091193 0.0090517 0.0070555 0.006745
+## Cumulative Proportion  0.916527 0.927343 0.9364620 0.9455137 0.9525692 0.959314
+##                          Comp.25   Comp.26   Comp.27   Comp.28   Comp.29
+## Standard deviation     0.5002090 0.4445184 0.4289705 0.4163068 0.3798478
+## Proportion of Variance 0.0062552 0.0049399 0.0046004 0.0043328 0.0036071
+## Cumulative Proportion  0.9655694 0.9705093 0.9751097 0.9794425 0.9830496
+##                          Comp.30  Comp.31   Comp.32   Comp.33   Comp.34
+## Standard deviation     0.3687957 0.330394 0.3080062 0.2985745 0.2775813
+## Proportion of Variance 0.0034003 0.002729 0.0023717 0.0022287 0.0019263
+## Cumulative Proportion  0.9864499 0.989179 0.9915506 0.9937793 0.9957055
+##                         Comp.35   Comp.36    Comp.37   Comp.38    Comp.39
+## Standard deviation     0.255425 0.2028722 0.19364728 0.1294454 0.09190426
+## Proportion of Variance 0.001631 0.0010289 0.00093748 0.0004189 0.00021116
+## Cumulative Proportion  0.997337 0.9983655 0.99930300 0.9997219 0.99993306
+##                           Comp.40
+## Standard deviation     5.1745e-02
+## Proportion of Variance 6.6939e-05
+## Cumulative Proportion  1.0000e+00</code></pre>
+<pre><code>## Eigenvalues</code></pre>
+<pre><code>##  Comp.1  Comp.2  Comp.3  Comp.4  Comp.5  Comp.6  Comp.7  Comp.8  Comp.9 Comp.10 
+##    8.09    7.45    4.72    3.13    1.90    1.34    1.25    1.11    1.04    0.99 
+## Comp.11 Comp.12 Comp.13 Comp.14 Comp.15 Comp.16 Comp.17 Comp.18 Comp.19 Comp.20 
+##    0.95    0.77    0.76    0.63    0.59    0.51    0.50    0.48    0.45    0.43 
+## Comp.21 Comp.22 Comp.23 Comp.24 Comp.25 Comp.26 Comp.27 Comp.28 Comp.29 Comp.30 
+##    0.36    0.36    0.28    0.27    0.25    0.20    0.18    0.17    0.14    0.14 
+## Comp.31 Comp.32 Comp.33 Comp.34 Comp.35 Comp.36 Comp.37 Comp.38 Comp.39 Comp.40 
+##    0.11    0.09    0.09    0.08    0.07    0.04    0.04    0.02    0.01    0.00</code></pre>
+<p>To clarify our results, we will make a scree plot of our principal components and overlay the Longman and Allen method values for parallel analysis. Following the pattern we observed directly, the scree plot flattens out after the <span class="math inline">\(6\)</span>th principal component. This is also where it dips below the Longman and Allen method values, so this seems to be the most reasonable cutoff point. As a result we will keep <span class="math inline">\(5\)</span> principal components and thus look for <span class="math inline">\(5\)</span> latent factors in our factor analysis. Conveniently, this is a much more substantial and useful reduction in dimension compared to keeping <span class="math inline">\(10\)</span> or <span class="math inline">\(11\)</span> components, so we will be able to more easily plot and interpret our factor analysis results.</p>
+<pre><code>##    pcompnum longman  allen
+## 1         1  1.9111 1.9021
+## 2         2  1.7886 1.7977
+## 3         3  1.7078 1.7203
+## 4         4  1.6516 1.6546
+## 5         5  1.5892 1.5967
+## 6         6  1.5356 1.5431
+## 7         7  1.4847 1.4972
+## 8         8  1.4380 1.4553
+## 9         9  1.3941 1.4126
+## 10       10  1.3495 1.3733</code></pre>
+<p><img src="factor_analysis_files/figure-html/parallelplot-1.png" width="672" /></p>
+<p>Now, looking at the loadings for these first <span class="math inline">\(5\)</span> components, most of them are quite low, and there are no strong interpretations of the components overall. However, the first component is vaguely focused on composite variables like RPI and strength of schedule, representing overall team quality. Meanwhile, the second component has highest loadings on opponent tournament statistics, implying good tournament competition (probably due to a low seed or a long tournament run). The third component is seemingly a measure of offensive efficiency, while the fourth and fifth components are very opaque. Overall, while not overly useful or definitive, these PCA results imply that our factor analysis, which does a similar dimensional reduction with rotations to produce a “nice story,” will yield insightful results.</p>
+<table>
+<caption>Table continues below</caption>
+<colgroup>
+<col width="40%" />
+<col width="15%" />
+<col width="13%" />
+<col width="15%" />
+<col width="15%" />
+</colgroup>
+<thead>
+<tr class="header">
+<th align="left"> </th>
+<th align="left">Comp.1</th>
+<th align="left">Comp.2</th>
+<th align="left">Comp.3</th>
+<th align="left">Comp.4</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td align="left"><strong>efficiency</strong></td>
+<td align="left">0.1247</td>
+<td align="left">0.1283</td>
+<td align="left">0.3012</td>
+<td align="left">0.2429</td>
+</tr>
+<tr class="even">
+<td align="left"><strong>true_shooting_pct</strong></td>
+<td align="left">0.04114</td>
+<td align="left">0.1053</td>
+<td align="left">0.1982</td>
+<td align="left">0.3112</td>
+</tr>
+<tr class="odd">
+<td align="left"><strong>points</strong></td>
+<td align="left">0.04905</td>
+<td align="left">0.1453</td>
+<td align="left">0.3734</td>
+<td align="left">0.09708</td>
+</tr>
+<tr class="even">
+<td align="left"><strong>assists</strong></td>
+<td align="left">0.08488</td>
+<td align="left">0.09742</td>
+<td align="left">0.2651</td>
+<td align="left">0.2203</td>
+</tr>
+<tr class="odd">
+<td align="left"><strong>points_in_paint</strong></td>
+<td align="left">0.0185</td>
+<td align="left">0.1073</td>
+<td align="left">0.2573</td>
+<td align="left">0.09306</td>
+</tr>
+<tr class="even">
+<td align="left"><strong>second_chance_pts</strong></td>
+<td align="left">0.1191</td>
+<td align="left">-0.02963</td>
+<td align="left">0.1627</td>
+<td align="left">-0.05964</td>
+</tr>
+<tr class="odd">
+<td align="left"><strong>blocked_att</strong></td>
+<td align="left">0.275</td>
+<td align="left">0.07665</td>
+<td align="left">-0.05147</td>
+<td align="left">-0.2159</td>
+</tr>
+<tr class="even">
+<td align="left"><strong>personal_fouls</strong></td>
+<td align="left">-0.05297</td>
+<td align="left">-0.06114</td>
+<td align="left">0.1791</td>
+<td align="left">-0.2425</td>
+</tr>
+<tr class="odd">
+<td align="left"><strong>flagrant_fouls</strong></td>
+<td align="left">0.1026</td>
+<td align="left">0.1327</td>
+<td align="left">-0.1285</td>
+<td align="left">-0.2228</td>
+</tr>
+<tr class="even">
+<td align="left"><strong>opp_true_shooting_pct</strong></td>
+<td align="left">-0.1459</td>
+<td align="left">0.07855</td>
+<td align="left">0.2018</td>
+<td align="left">-0.2331</td>
+</tr>
+<tr class="odd">
+<td align="left"><strong>opp_points</strong></td>
+<td align="left">-0.06613</td>
+<td align="left">0.1487</td>
+<td align="left">0.315</td>
+<td align="left">-0.2407</td>
+</tr>
+<tr class="even">
+<td align="left"><strong>opp_assists</strong></td>
+<td align="left">-0.02231</td>
+<td align="left">0.1132</td>
+<td align="left">0.1689</td>
+<td align="left">-0.2592</td>
+</tr>
+<tr class="odd">
+<td align="left"><strong>opp_points_in_paint</strong></td>
+<td align="left">-0.06848</td>
+<td align="left">0.1105</td>
+<td align="left">0.2562</td>
+<td align="left">-0.17</td>
+</tr>
+<tr class="even">
+<td align="left"><strong>opp_fast_break_pts</strong></td>
+<td align="left">-0.002005</td>
+<td align="left">0.1707</td>
+<td align="left">0.04755</td>
+<td align="left">-0.2219</td>
+</tr>
+<tr class="odd">
+<td align="left"><strong>opp_blocked_att</strong></td>
+<td align="left">0.2929</td>
+<td align="left">0.05827</td>
+<td align="left">-0.09529</td>
+<td align="left">-0.1112</td>
+</tr>
+<tr class="even">
+<td align="left"><strong>opp_personal_fouls</strong></td>
+<td align="left">0.03322</td>
+<td align="left">-0.075</td>
+<td align="left">0.1667</td>
+<td align="left">-0.2018</td>
+</tr>
+<tr class="odd">
+<td align="left"><strong>opp_flagrant_fouls</strong></td>
+<td align="left">0.1488</td>
+<td align="left">0.1216</td>
+<td align="left">-0.1118</td>
+<td align="left">-0.04543</td>
+</tr>
+<tr class="even">
+<td align="left"><strong>rpi</strong></td>
+<td align="left">0.2942</td>
+<td align="left">0.0554</td>
+<td align="left">-0.02159</td>
+<td align="left">0.1498</td>
+</tr>
+<tr class="odd">
+<td align="left"><strong>sos</strong></td>
+<td align="left">0.3118</td>
+<td align="left">0.0707</td>
+<td align="left">-0.05165</td>
+<td align="left">-0.1131</td>
+</tr>
+<tr class="even">
+<td align="left"><strong>owp</strong></td>
+<td align="left">0.3055</td>
+<td align="left">0.06781</td>
+<td align="left">-0.04858</td>
+<td align="left">-0.1016</td>
+</tr>
+<tr class="odd">
+<td align="left"><strong>seed</strong></td>
+<td align="left">-0.3123</td>
+<td align="left">-0.074</td>
+<td align="left">0.02963</td>
+<td align="left">-0.0658</td>
+</tr>
+<tr class="even">
+<td align="left"><strong>tourn_bid_num</strong></td>
+<td align="left">-0.2093</td>
+<td align="left">-0.06427</td>
+<td align="left">0.05212</td>
+<td align="left">0.2586</td>
+</tr>
+<tr class="odd">
+<td align="left"><strong>conference_type_num</strong></td>
+<td align="left">-0.2542</td>
+<td align="left">-0.07321</td>
+<td align="left">0.05297</td>
+<td align="left">0.209</td>
+</tr>
+<tr class="even">
+<td align="left"><strong>log_tourn_games_played</strong></td>
+<td align="left">0.2379</td>
+<td align="left">0.03534</td>
+<td align="left">-0.03119</td>
+<td align="left">0.1474</td>
+</tr>
+<tr class="odd">
+<td align="left"><strong>tourn_point_diff</strong></td>
+<td align="left">0.2511</td>
+<td align="left">0.03591</td>
+<td align="left">-0.00591</td>
+<td align="left">0.1603</td>
+</tr>
+<tr class="even">
+<td align="left"><strong>tourn_points</strong></td>
+<td align="left">0.154</td>
+<td align="left">0.06509</td>
+<td align="left">0.241</td>
+<td align="left">0.02723</td>
+</tr>
+<tr class="odd">
+<td align="left"><strong>tourn_assists</strong></td>
+<td align="left">0.09528</td>
+<td align="left">0.04279</td>
+<td align="left">0.2019</td>
+<td align="left">0.1229</td>
+</tr>
+<tr class="even">
+<td align="left"><strong>tourn_fast_break_pts</strong></td>
+<td align="left">0.01329</td>
+<td align="left">0.09804</td>
+<td align="left">0.0771</td>
+<td align="left">-0.05828</td>
+</tr>
+<tr class="odd">
+<td align="left"><strong>tourn_second_chance_pts</strong></td>
+<td align="left">0.1011</td>
+<td align="left">-0.02685</td>
+<td align="left">0.1115</td>
+<td align="left">0.04594</td>
+</tr>
+<tr class="even">
+<td align="left"><strong>tourn_personal_fouls</strong></td>
+<td align="left">-0.03564</td>
+<td align="left">-0.04349</td>
+<td align="left">0.145</td>
+<td align="left">-0.1817</td>
+</tr>
+<tr class="odd">
+<td align="left"><strong>tourn_flagrant_fouls</strong></td>
+<td align="left">-0.03545</td>
+<td align="left">0.02426</td>
+<td align="left">-0.004482</td>
+<td align="left">-0.1591</td>
+</tr>
+<tr class="even">
+<td align="left"><strong>tourn_blocked_att</strong></td>
+<td align="left">-0.06676</td>
+<td align="left">-0.05411</td>
+<td align="left">0.0954</td>
+<td align="left">-0.03125</td>
+</tr>
+<tr class="odd">
+<td align="left"><strong>tourn_opp_efficiency</strong></td>
+<td align="left">-0.1245</td>
+<td align="left">0.3055</td>
+<td align="left">-0.04736</td>
+<td align="left">-0.0117</td>
+</tr>
+<tr class="even">
+<td align="left"><strong>tourn_opp_field_goal_pct</strong></td>
+<td align="left">0.1237</td>
+<td align="left">-0.237</td>
+<td align="left">0.07218</td>
+<td align="left">0.007135</td>
+</tr>
+<tr class="odd">
+<td align="left"><strong>tourn_opp_points</strong></td>
+<td align="left">-0.09732</td>
+<td align="left">0.3349</td>
+<td align="left">-0.07662</td>
+<td align="left">0.01146</td>
+</tr>
+<tr class="even">
+<td align="left"><strong>tourn_opp_assists</strong></td>
+<td align="left">0.007953</td>
+<td align="left">-0.2771</td>
+<td align="left">0.1358</td>
+<td align="left">-0.1054</td>
+</tr>
+<tr class="odd">
+<td align="left"><strong>tourn_opp_points_in_paint</strong></td>
+<td align="left">-0.1096</td>
+<td align="left">0.3248</td>
+<td align="left">-0.07662</td>
+<td align="left">0.03349</td>
+</tr>
+<tr class="even">
+<td align="left"><strong>tourn_opp_blocked_att</strong></td>
+<td align="left">0.1127</td>
+<td align="left">-0.3103</td>
+<td align="left">0.125</td>
+<td align="left">-0.05798</td>
+</tr>
+<tr class="odd">
+<td align="left"><strong>tourn_opp_personal_fouls</strong></td>
+<td align="left">-0.07868</td>
+<td align="left">0.3152</td>
+<td align="left">-0.06469</td>
+<td align="left">0.01456</td>
+</tr>
+<tr class="even">
+<td align="left"><strong>tourn_opp_flagrant_fouls</strong></td>
+<td align="left">0.07487</td>
+<td align="left">-0.323</td>
+<td align="left">0.1131</td>
+<td align="left">-0.03919</td>
+</tr>
+</tbody>
+</table>
+<table style="width:60%;">
+<colgroup>
+<col width="44%" />
+<col width="15%" />
+</colgroup>
+<thead>
+<tr class="header">
+<th align="left"> </th>
+<th align="left">Comp.5</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td align="left"><strong>efficiency</strong></td>
+<td align="left">0.0887</td>
+</tr>
+<tr class="even">
+<td align="left"><strong>true_shooting_pct</strong></td>
+<td align="left">-0.1826</td>
+</tr>
+<tr class="odd">
+<td align="left"><strong>points</strong></td>
+<td align="left">0.05422</td>
+</tr>
+<tr class="even">
+<td align="left"><strong>assists</strong></td>
+<td align="left">0.03977</td>
+</tr>
+<tr class="odd">
+<td align="left"><strong>points_in_paint</strong></td>
+<td align="left">0.1934</td>
+</tr>
+<tr class="even">
+<td align="left"><strong>second_chance_pts</strong></td>
+<td align="left">0.3928</td>
+</tr>
+<tr class="odd">
+<td align="left"><strong>blocked_att</strong></td>
+<td align="left">0.02103</td>
+</tr>
+<tr class="even">
+<td align="left"><strong>personal_fouls</strong></td>
+<td align="left">0.3584</td>
+</tr>
+<tr class="odd">
+<td align="left"><strong>flagrant_fouls</strong></td>
+<td align="left">0.109</td>
+</tr>
+<tr class="even">
+<td align="left"><strong>opp_true_shooting_pct</strong></td>
+<td align="left">-0.1492</td>
+</tr>
+<tr class="odd">
+<td align="left"><strong>opp_points</strong></td>
+<td align="left">-0.1603</td>
+</tr>
+<tr class="even">
+<td align="left"><strong>opp_assists</strong></td>
+<td align="left">-0.3263</td>
+</tr>
+<tr class="odd">
+<td align="left"><strong>opp_points_in_paint</strong></td>
+<td align="left">-0.2603</td>
+</tr>
+<tr class="even">
+<td align="left"><strong>opp_fast_break_pts</strong></td>
+<td align="left">-0.06841</td>
+</tr>
+<tr class="odd">
+<td align="left"><strong>opp_blocked_att</strong></td>
+<td align="left">0.06429</td>
+</tr>
+<tr class="even">
+<td align="left"><strong>opp_personal_fouls</strong></td>
+<td align="left">0.2607</td>
+</tr>
+<tr class="odd">
+<td align="left"><strong>opp_flagrant_fouls</strong></td>
+<td align="left">0.1426</td>
+</tr>
+<tr class="even">
+<td align="left"><strong>rpi</strong></td>
+<td align="left">0.05913</td>
+</tr>
+<tr class="odd">
+<td align="left"><strong>sos</strong></td>
+<td align="left">-0.09499</td>
+</tr>
+<tr class="even">
+<td align="left"><strong>owp</strong></td>
+<td align="left">-0.09838</td>
+</tr>
+<tr class="odd">
+<td align="left"><strong>seed</strong></td>
+<td align="left">-0.04597</td>
+</tr>
+<tr class="even">
+<td align="left"><strong>tourn_bid_num</strong></td>
+<td align="left">0.02147</td>
+</tr>
+<tr class="odd">
+<td align="left"><strong>conference_type_num</strong></td>
+<td align="left">0.1476</td>
+</tr>
+<tr class="even">
+<td align="left"><strong>log_tourn_games_played</strong></td>
+<td align="left">-0.0417</td>
+</tr>
+<tr class="odd">
+<td align="left"><strong>tourn_point_diff</strong></td>
+<td align="left">0.01206</td>
+</tr>
+<tr class="even">
+<td align="left"><strong>tourn_points</strong></td>
+<td align="left">-0.0502</td>
+</tr>
+<tr class="odd">
+<td align="left"><strong>tourn_assists</strong></td>
+<td align="left">-0.1395</td>
+</tr>
+<tr class="even">
+<td align="left"><strong>tourn_fast_break_pts</strong></td>
+<td align="left">-0.07503</td>
+</tr>
+<tr class="odd">
+<td align="left"><strong>tourn_second_chance_pts</strong></td>
+<td align="left">0.1306</td>
+</tr>
+<tr class="even">
+<td align="left"><strong>tourn_personal_fouls</strong></td>
+<td align="left">0.2741</td>
+</tr>
+<tr class="odd">
+<td align="left"><strong>tourn_flagrant_fouls</strong></td>
+<td align="left">0.1473</td>
+</tr>
+<tr class="even">
+<td align="left"><strong>tourn_blocked_att</strong></td>
+<td align="left">0.2371</td>
+</tr>
+<tr class="odd">
+<td align="left"><strong>tourn_opp_efficiency</strong></td>
+<td align="left">0.02047</td>
+</tr>
+<tr class="even">
+<td align="left"><strong>tourn_opp_field_goal_pct</strong></td>
+<td align="left">-0.1156</td>
+</tr>
+<tr class="odd">
+<td align="left"><strong>tourn_opp_points</strong></td>
+<td align="left">0.05988</td>
+</tr>
+<tr class="even">
+<td align="left"><strong>tourn_opp_assists</strong></td>
+<td align="left">-0.07992</td>
+</tr>
+<tr class="odd">
+<td align="left"><strong>tourn_opp_points_in_paint</strong></td>
+<td align="left">0.0468</td>
+</tr>
+<tr class="even">
+<td align="left"><strong>tourn_opp_blocked_att</strong></td>
+<td align="left">-0.02863</td>
+</tr>
+<tr class="odd">
+<td align="left"><strong>tourn_opp_personal_fouls</strong></td>
+<td align="left">0.1677</td>
+</tr>
+<tr class="even">
+<td align="left"><strong>tourn_opp_flagrant_fouls</strong></td>
+<td align="left">-0.03911</td>
+</tr>
+</tbody>
+</table>
+</div>
+<div id="extraction-techniques-and-rotations" class="section level2">
+<h2>Extraction Techniques and Rotations</h2>
+<p>Moving on to the actual factor analysis, we will use the <em>fa</em> library function to calculate these factors and print out several metrics for gauging the success of the analysis, including the proportion of residual values greater than <span class="math inline">\(0.05\)</span>, the RMS statistic, and a measure how well the factor model reproduces the correlation matrix. Then, it prints out the loadings of each factor for interpretation. Finally, it prints out two plots: a two-dimensional plot along the first two factors (those with the highest proportion of variance) and a three-dimensional plot along the other three factors (as the “remainder” terms). In this case, we will try non-iterative principal axis factoring (PAF) and maximum likelihood factoring as our extraction techniques. We will choose PAF for further analysis because it has approximately the same residual proportion (about <span class="math inline">\(0.19\)</span>), lower RMS (about <span class="math inline">\(0.04\)</span> versus about <span class="math inline">\(0.05\)</span>), and higher fit (<span class="math inline">\(0.93\)</span> versus <span class="math inline">\(0.90\)</span>). This implies that this PAF better reproduces the true correlation matrix (though they are very similar). Then, we will use a varimax rotation so that each indicator has a high loading on one and only one factor. This combination will give us the clearest results.</p>
+<p>Starting with our two-dimensional plot, we see very strong separation between factors, with almost all the variation occuring along one of the two axes. Similarly, the three-dimensional plot of the other factors also has clear and logical groupings (e.g. regular season offense, tournament defense, etc.) with some interesting proximities between them (e.g. tournament success being close to regular season defense). We can clearly see the rotation taking effect, as the “squareness” of the patterns with respect to the axes is very strong. Investigating the loadings, they mirror those of PCA, with every component exaggerated and clarified; thus, these rotations were very successful in producing our desired “nice story.” The first factor is now clearly a measure of overall team ability, while also being the strongest predictor of tournament success. The second factor is strongly reflective of tournament defense but not really regular season defense, probably due to smaller conference teams who face much tougher competition in the tournament than in the regular season. The third factor is now very strongly about regular season offense, with some reflection of tournament offense and overall success as well. The fourth factor is still the most vague but now has the highest loadings on regular season defense. Finally, the fifth factor is seemingly a measure of aggression, which interestingly correlates negatively with tournament success.</p>
+<p>In terms of overall conclusions, the most prominent and interesting was probably the connection between regular season ratings, namely RPI and strength of schedule, and tournament success. Additionally, the inclusion of the “aggression” factor was very interesting, with the negative correlation to tournament success perhaps reflecting the more controlled, offensive game of modern times. In summary, these factors are probably best described by: overall team quality (regular season and tournament success), tournament defensive efficiency, offensive efficiency, regular season defensive efficiency, and aggression. Among these, regular season defensive efficiency and aggression are definitely the weakest and could possibly be left out.</p>
+<pre><code>## Fit statistics for Maximum Likelihood</code></pre>
+<pre><code>## Proportion of residuals greater than 0.05</code></pre>
+<pre><code>## 0.1925</code></pre>
+<pre><code>## RMS</code></pre>
+<pre><code>## 0.053694</code></pre>
+<pre><code>## Fit of how well the factor model reproduces the correlation matrix</code></pre>
+<pre><code>## 0.90481</code></pre>
+<pre><code>## Fit statistics for PAF</code></pre>
+<pre><code>## Proportion of residuals greater than 0.05</code></pre>
+<pre><code>## 0.195</code></pre>
+<pre><code>## RMS</code></pre>
+<pre><code>## 0.04182</code></pre>
+<pre><code>## Fit of how well the factor model reproduces the correlation matrix</code></pre>
+<pre><code>## 0.92622</code></pre>
+<pre><code>## Matrix of loadings for each factor</code></pre>
+<table>
+<caption>Table continues below</caption>
+<colgroup>
+<col width="39%" />
+<col width="16%" />
+<col width="14%" />
+<col width="14%" />
+<col width="14%" />
+</colgroup>
+<thead>
+<tr class="header">
+<th align="left"> </th>
+<th align="left">PA1</th>
+<th align="left">PA2</th>
+<th align="left">PA3</th>
+<th align="left">PA4</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td align="left"><strong>efficiency</strong></td>
+<td align="left">0.1145</td>
+<td align="left">0.09932</td>
+<td align="left">0.9481</td>
+<td align="left">0.009298</td>
+</tr>
+<tr class="even">
+<td align="left"><strong>true_shooting_pct</strong></td>
+<td align="left">-0.08473</td>
+<td align="left">0.07847</td>
+<td align="left">0.6772</td>
+<td align="left">0.07494</td>
+</tr>
+<tr class="odd">
+<td align="left"><strong>points</strong></td>
+<td align="left">-0.01593</td>
+<td align="left">0.1349</td>
+<td align="left">0.8581</td>
+<td align="left">0.322</td>
+</tr>
+<tr class="even">
+<td align="left"><strong>assists</strong></td>
+<td align="left">0.03644</td>
+<td align="left">0.05474</td>
+<td align="left">0.7309</td>
+<td align="left">0.04332</td>
+</tr>
+<tr class="odd">
+<td align="left"><strong>points_in_paint</strong></td>
+<td align="left">-0.04542</td>
+<td align="left">0.1577</td>
+<td align="left">0.5465</td>
+<td align="left">0.109</td>
+</tr>
+<tr class="even">
+<td align="left"><strong>second_chance_pts</strong></td>
+<td align="left">0.2274</td>
+<td align="left">-0.1326</td>
+<td align="left">0.2895</td>
+<td align="left">-0.1169</td>
+</tr>
+<tr class="odd">
+<td align="left"><strong>blocked_att</strong></td>
+<td align="left">0.8885</td>
+<td align="left">-0.009977</td>
+<td align="left">0.002766</td>
+<td align="left">0.07839</td>
+</tr>
+<tr class="even">
+<td align="left"><strong>personal_fouls</strong></td>
+<td align="left">-0.121</td>
+<td align="left">-0.1016</td>
+<td align="left">-0.006112</td>
+<td align="left">0.1337</td>
+</tr>
+<tr class="odd">
+<td align="left"><strong>flagrant_fouls</strong></td>
+<td align="left">0.4816</td>
+<td align="left">0.2971</td>
+<td align="left">-0.1881</td>
+<td align="left">0.06268</td>
+</tr>
+<tr class="even">
+<td align="left"><strong>opp_true_shooting_pct</strong></td>
+<td align="left">-0.273</td>
+<td align="left">0.126</td>
+<td align="left">0.01151</td>
+<td align="left">0.6457</td>
+</tr>
+<tr class="odd">
+<td align="left"><strong>opp_points</strong></td>
+<td align="left">-0.08012</td>
+<td align="left">0.1573</td>
+<td align="left">0.3056</td>
+<td align="left">0.8845</td>
+</tr>
+<tr class="even">
+<td align="left"><strong>opp_assists</strong></td>
+<td align="left">0.07484</td>
+<td align="left">0.0761</td>
+<td align="left">0.05905</td>
+<td align="left">0.7186</td>
+</tr>
+<tr class="odd">
+<td align="left"><strong>opp_points_in_paint</strong></td>
+<td align="left">-0.1216</td>
+<td align="left">0.0835</td>
+<td align="left">0.2308</td>
+<td align="left">0.7068</td>
+</tr>
+<tr class="even">
+<td align="left"><strong>opp_fast_break_pts</strong></td>
+<td align="left">0.1794</td>
+<td align="left">0.3269</td>
+<td align="left">-0.006932</td>
+<td align="left">0.3946</td>
+</tr>
+<tr class="odd">
+<td align="left"><strong>opp_blocked_att</strong></td>
+<td align="left">0.8796</td>
+<td align="left">-0.02032</td>
+<td align="left">0.04549</td>
+<td align="left">-0.1349</td>
+</tr>
+<tr class="even">
+<td align="left"><strong>opp_personal_fouls</strong></td>
+<td align="left">0.05894</td>
+<td align="left">-0.2207</td>
+<td align="left">0.0712</td>
+<td align="left">0.1076</td>
+</tr>
+<tr class="odd">
+<td align="left"><strong>opp_flagrant_fouls</strong></td>
+<td align="left">0.4881</td>
+<td align="left">0.2504</td>
+<td align="left">0.0161</td>
+<td align="left">-0.1317</td>
+</tr>
+<tr class="even">
+<td align="left"><strong>rpi</strong></td>
+<td align="left">0.7014</td>
+<td align="left">-0.04905</td>
+<td align="left">0.4118</td>
+<td align="left">-0.33</td>
+</tr>
+<tr class="odd">
+<td align="left"><strong>sos</strong></td>
+<td align="left">0.9348</td>
+<td align="left">-0.08618</td>
+<td align="left">0.1193</td>
+<td align="left">0.04569</td>
+</tr>
+<tr class="even">
+<td align="left"><strong>owp</strong></td>
+<td align="left">0.9015</td>
+<td align="left">-0.08892</td>
+<td align="left">0.1286</td>
+<td align="left">0.037</td>
+</tr>
+<tr class="odd">
+<td align="left"><strong>seed</strong></td>
+<td align="left">-0.8153</td>
+<td align="left">0.02534</td>
+<td align="left">-0.3481</td>
+<td align="left">0.2375</td>
+</tr>
+<tr class="even">
+<td align="left"><strong>tourn_bid_num</strong></td>
+<td align="left">-0.7058</td>
+<td align="left">0.005251</td>
+<td align="left">0.08896</td>
+<td align="left">-0.1552</td>
+</tr>
+<tr class="odd">
+<td align="left"><strong>conference_type_num</strong></td>
+<td align="left">-0.8199</td>
+<td align="left">0.05497</td>
+<td align="left">0.02144</td>
+<td align="left">-0.1967</td>
+</tr>
+<tr class="even">
+<td align="left"><strong>log_tourn_games_played</strong></td>
+<td align="left">0.5363</td>
+<td align="left">-0.07651</td>
+<td align="left">0.2989</td>
+<td align="left">-0.2344</td>
+</tr>
+<tr class="odd">
+<td align="left"><strong>tourn_point_diff</strong></td>
+<td align="left">0.5536</td>
+<td align="left">-0.08079</td>
+<td align="left">0.3648</td>
+<td align="left">-0.2707</td>
+</tr>
+<tr class="even">
+<td align="left"><strong>tourn_points</strong></td>
+<td align="left">0.2933</td>
+<td align="left">-0.09379</td>
+<td align="left">0.5361</td>
+<td align="left">0.1983</td>
+</tr>
+<tr class="odd">
+<td align="left"><strong>tourn_assists</strong></td>
+<td align="left">0.1111</td>
+<td align="left">-0.09116</td>
+<td align="left">0.4704</td>
+<td align="left">0.1304</td>
+</tr>
+<tr class="even">
+<td align="left"><strong>tourn_fast_break_pts</strong></td>
+<td align="left">0.08092</td>
+<td align="left">0.1516</td>
+<td align="left">0.128</td>
+<td align="left">0.1986</td>
+</tr>
+<tr class="odd">
+<td align="left"><strong>tourn_second_chance_pts</strong></td>
+<td align="left">0.1538</td>
+<td align="left">-0.1512</td>
+<td align="left">0.2509</td>
+<td align="left">-0.06683</td>
+</tr>
+<tr class="even">
+<td align="left"><strong>tourn_personal_fouls</strong></td>
+<td align="left">-0.08493</td>
+<td align="left">-0.08349</td>
+<td align="left">0.0182</td>
+<td align="left">0.113</td>
+</tr>
+<tr class="odd">
+<td align="left"><strong>tourn_flagrant_fouls</strong></td>
+<td align="left">-0.0006774</td>
+<td align="left">0.09303</td>
+<td align="left">-0.123</td>
+<td align="left">0.09398</td>
+</tr>
+<tr class="even">
+<td align="left"><strong>tourn_blocked_att</strong></td>
+<td align="left">-0.2097</td>
+<td align="left">-0.0698</td>
+<td align="left">0.0302</td>
+<td align="left">-0.007432</td>
+</tr>
+<tr class="odd">
+<td align="left"><strong>tourn_opp_efficiency</strong></td>
+<td align="left">-0.08859</td>
+<td align="left">0.8633</td>
+<td align="left">0.01322</td>
+<td align="left">0.24</td>
+</tr>
+<tr class="even">
+<td align="left"><strong>tourn_opp_field_goal_pct</strong></td>
+<td align="left">0.12</td>
+<td align="left">-0.7087</td>
+<td align="left">0.05687</td>
+<td align="left">-0.09255</td>
+</tr>
+<tr class="odd">
+<td align="left"><strong>tourn_opp_points</strong></td>
+<td align="left">-0.0004437</td>
+<td align="left">0.9662</td>
+<td align="left">0.03564</td>
+<td align="left">0.1611</td>
+</tr>
+<tr class="even">
+<td align="left"><strong>tourn_opp_assists</strong></td>
+<td align="left">-0.158</td>
+<td align="left">-0.7636</td>
+<td align="left">-0.07089</td>
+<td align="left">0.08922</td>
+</tr>
+<tr class="odd">
+<td align="left"><strong>tourn_opp_points_in_paint</strong></td>
+<td align="left">-0.05179</td>
+<td align="left">0.942</td>
+<td align="left">0.03976</td>
+<td align="left">0.1471</td>
+</tr>
+<tr class="even">
+<td align="left"><strong>tourn_opp_blocked_att</strong></td>
+<td align="left">0.06016</td>
+<td align="left">-0.9292</td>
+<td align="left">0.0296</td>
+<td align="left">-0.07627</td>
+</tr>
+<tr class="odd">
+<td align="left"><strong>tourn_opp_personal_fouls</strong></td>
+<td align="left">0.02505</td>
+<td align="left">0.9184</td>
+<td align="left">0.07041</td>
+<td align="left">0.06192</td>
+</tr>
+<tr class="even">
+<td align="left"><strong>tourn_opp_flagrant_fouls</strong></td>
+<td align="left">-0.04929</td>
+<td align="left">-0.9225</td>
+<td align="left">-0.01526</td>
+<td align="left">-0.09287</td>
+</tr>
+</tbody>
+</table>
+<table style="width:61%;">
+<colgroup>
+<col width="44%" />
+<col width="16%" />
+</colgroup>
+<thead>
+<tr class="header">
+<th align="left"> </th>
+<th align="left">PA5</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td align="left"><strong>efficiency</strong></td>
+<td align="left">0.06312</td>
+</tr>
+<tr class="even">
+<td align="left"><strong>true_shooting_pct</strong></td>
+<td align="left">-0.3392</td>
+</tr>
+<tr class="odd">
+<td align="left"><strong>points</strong></td>
+<td align="left">0.2235</td>
+</tr>
+<tr class="even">
+<td align="left"><strong>assists</strong></td>
+<td align="left">0.01557</td>
+</tr>
+<tr class="odd">
+<td align="left"><strong>points_in_paint</strong></td>
+<td align="left">0.2446</td>
+</tr>
+<tr class="even">
+<td align="left"><strong>second_chance_pts</strong></td>
+<td align="left">0.5156</td>
+</tr>
+<tr class="odd">
+<td align="left"><strong>blocked_att</strong></td>
+<td align="left">0.112</td>
+</tr>
+<tr class="even">
+<td align="left"><strong>personal_fouls</strong></td>
+<td align="left">0.7332</td>
+</tr>
+<tr class="odd">
+<td align="left"><strong>flagrant_fouls</strong></td>
+<td align="left">0.1126</td>
+</tr>
+<tr class="even">
+<td align="left"><strong>opp_true_shooting_pct</strong></td>
+<td align="left">0.1961</td>
+</tr>
+<tr class="odd">
+<td align="left"><strong>opp_points</strong></td>
+<td align="left">0.249</td>
+</tr>
+<tr class="even">
+<td align="left"><strong>opp_assists</strong></td>
+<td align="left">-0.009627</td>
+</tr>
+<tr class="odd">
+<td align="left"><strong>opp_points_in_paint</strong></td>
+<td align="left">0.04696</td>
+</tr>
+<tr class="even">
+<td align="left"><strong>opp_fast_break_pts</strong></td>
+<td align="left">0.09518</td>
+</tr>
+<tr class="odd">
+<td align="left"><strong>opp_blocked_att</strong></td>
+<td align="left">0.03671</td>
+</tr>
+<tr class="even">
+<td align="left"><strong>opp_personal_fouls</strong></td>
+<td align="left">0.5123</td>
+</tr>
+<tr class="odd">
+<td align="left"><strong>opp_flagrant_fouls</strong></td>
+<td align="left">0.01573</td>
+</tr>
+<tr class="even">
+<td align="left"><strong>rpi</strong></td>
+<td align="left">-0.1487</td>
+</tr>
+<tr class="odd">
+<td align="left"><strong>sos</strong></td>
+<td align="left">-0.1239</td>
+</tr>
+<tr class="even">
+<td align="left"><strong>owp</strong></td>
+<td align="left">-0.1318</td>
+</tr>
+<tr class="odd">
+<td align="left"><strong>seed</strong></td>
+<td align="left">0.1041</td>
+</tr>
+<tr class="even">
+<td align="left"><strong>tourn_bid_num</strong></td>
+<td align="left">-0.1054</td>
+</tr>
+<tr class="odd">
+<td align="left"><strong>conference_type_num</strong></td>
+<td align="left">0.0749</td>
+</tr>
+<tr class="even">
+<td align="left"><strong>log_tourn_games_played</strong></td>
+<td align="left">-0.2182</td>
+</tr>
+<tr class="odd">
+<td align="left"><strong>tourn_point_diff</strong></td>
+<td align="left">-0.1612</td>
+</tr>
+<tr class="even">
+<td align="left"><strong>tourn_points</strong></td>
+<td align="left">0.07139</td>
+</tr>
+<tr class="odd">
+<td align="left"><strong>tourn_assists</strong></td>
+<td align="left">-0.07626</td>
+</tr>
+<tr class="even">
+<td align="left"><strong>tourn_fast_break_pts</strong></td>
+<td align="left">0.02293</td>
+</tr>
+<tr class="odd">
+<td align="left"><strong>tourn_second_chance_pts</strong></td>
+<td align="left">0.127</td>
+</tr>
+<tr class="even">
+<td align="left"><strong>tourn_personal_fouls</strong></td>
+<td align="left">0.4821</td>
+</tr>
+<tr class="odd">
+<td align="left"><strong>tourn_flagrant_fouls</strong></td>
+<td align="left">0.1861</td>
+</tr>
+<tr class="even">
+<td align="left"><strong>tourn_blocked_att</strong></td>
+<td align="left">0.2657</td>
+</tr>
+<tr class="odd">
+<td align="left"><strong>tourn_opp_efficiency</strong></td>
+<td align="left">-0.07349</td>
+</tr>
+<tr class="even">
+<td align="left"><strong>tourn_opp_field_goal_pct</strong></td>
+<td align="left">-0.01405</td>
+</tr>
+<tr class="odd">
+<td align="left"><strong>tourn_opp_points</strong></td>
+<td align="left">-0.08011</td>
+</tr>
+<tr class="even">
+<td align="left"><strong>tourn_opp_assists</strong></td>
+<td align="left">0.1842</td>
+</tr>
+<tr class="odd">
+<td align="left"><strong>tourn_opp_points_in_paint</strong></td>
+<td align="left">-0.1129</td>
+</tr>
+<tr class="even">
+<td align="left"><strong>tourn_opp_blocked_att</strong></td>
+<td align="left">0.1899</td>
+</tr>
+<tr class="odd">
+<td align="left"><strong>tourn_opp_personal_fouls</strong></td>
+<td align="left">0.04855</td>
+</tr>
+<tr class="even">
+<td align="left"><strong>tourn_opp_flagrant_fouls</strong></td>
+<td align="left">0.1636</td>
+</tr>
+</tbody>
+</table>
+<pre><code>## Plot factor analysis in two dimensions</code></pre>
+<p><img src="factor_analysis_files/figure-html/factor-1.png" width="672" /></p>
+<pre><code>## Plot factor analysis in three dimensions</code></pre>
+<p><img src="factor_analysis_files/figure-html/factor-2.png" width="672" /></p>
+</div>
+
+
+
+
+</div>
+
+<script>
+
+// add bootstrap table styles to pandoc tables
+function bootstrapStylePandocTables() {
+  $('tr.odd').parent('tbody').parent('table').addClass('table table-condensed');
+}
+$(document).ready(function () {
+  bootstrapStylePandocTables();
+});
+
+
+</script>
+
+<!-- tabsets -->
+
+<script>
+$(document).ready(function () {
+  window.buildTabsets("TOC");
+});
+
+$(document).ready(function () {
+  $('.tabset-dropdown > .nav-tabs > li').click(function () {
+    $(this).parent().toggleClass('nav-tabs-open')
+  });
+});
+</script>
+
+<!-- code folding -->
+
+
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+  (function () {
+    var script = document.createElement("script");
+    script.type = "text/javascript";
+    script.src  = "https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML";
+    document.getElementsByTagName("head")[0].appendChild(script);
+  })();
+</script>
+
+</body>
+</html>

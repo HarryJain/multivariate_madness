@@ -1,0 +1,746 @@
+<!DOCTYPE html>
+
+<html>
+
+<head>
+
+<meta charset="utf-8" />
+<meta name="generator" content="pandoc" />
+<meta http-equiv="X-UA-Compatible" content="IE=EDGE" />
+
+
+
+
+<title>Descriptive Plots and Summary Statistics</title>
+
+<script src="site_libs/header-attrs-2.6/header-attrs.js"></script>
+<script src="site_libs/jquery-1.11.3/jquery.min.js"></script>
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<link href="site_libs/bootstrap-3.3.5/css/cosmo.min.css" rel="stylesheet" />
+<script src="site_libs/bootstrap-3.3.5/js/bootstrap.min.js"></script>
+<script src="site_libs/bootstrap-3.3.5/shim/html5shiv.min.js"></script>
+<script src="site_libs/bootstrap-3.3.5/shim/respond.min.js"></script>
+<script src="site_libs/navigation-1.1/tabsets.js"></script>
+<link href="site_libs/highlightjs-9.12.0/default.css" rel="stylesheet" />
+<script src="site_libs/highlightjs-9.12.0/highlight.js"></script>
+
+<style type="text/css">
+  code{white-space: pre-wrap;}
+  span.smallcaps{font-variant: small-caps;}
+  span.underline{text-decoration: underline;}
+  div.column{display: inline-block; vertical-align: top; width: 50%;}
+  div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+  ul.task-list{list-style: none;}
+    </style>
+
+<style type="text/css">code{white-space: pre;}</style>
+<style type="text/css">
+  pre:not([class]) {
+    background-color: white;
+  }
+</style>
+<script type="text/javascript">
+if (window.hljs) {
+  hljs.configure({languages: []});
+  hljs.initHighlightingOnLoad();
+  if (document.readyState && document.readyState === "complete") {
+    window.setTimeout(function() { hljs.initHighlighting(); }, 0);
+  }
+}
+</script>
+
+
+
+<style type="text/css">
+h1 {
+  font-size: 34px;
+}
+h1.title {
+  font-size: 38px;
+}
+h2 {
+  font-size: 30px;
+}
+h3 {
+  font-size: 24px;
+}
+h4 {
+  font-size: 18px;
+}
+h5 {
+  font-size: 16px;
+}
+h6 {
+  font-size: 12px;
+}
+.table th:not([align]) {
+  text-align: left;
+}
+</style>
+
+
+
+
+
+<style type = "text/css">
+.main-container {
+  max-width: 940px;
+  margin-left: auto;
+  margin-right: auto;
+}
+code {
+  color: inherit;
+  background-color: rgba(0, 0, 0, 0.04);
+}
+img {
+  max-width:100%;
+}
+.tabbed-pane {
+  padding-top: 12px;
+}
+.html-widget {
+  margin-bottom: 20px;
+}
+button.code-folding-btn:focus {
+  outline: none;
+}
+summary {
+  display: list-item;
+}
+</style>
+
+
+<style type="text/css">
+/* padding for bootstrap navbar */
+body {
+  padding-top: 51px;
+  padding-bottom: 40px;
+}
+/* offset scroll position for anchor links (for fixed navbar)  */
+.section h1 {
+  padding-top: 56px;
+  margin-top: -56px;
+}
+.section h2 {
+  padding-top: 56px;
+  margin-top: -56px;
+}
+.section h3 {
+  padding-top: 56px;
+  margin-top: -56px;
+}
+.section h4 {
+  padding-top: 56px;
+  margin-top: -56px;
+}
+.section h5 {
+  padding-top: 56px;
+  margin-top: -56px;
+}
+.section h6 {
+  padding-top: 56px;
+  margin-top: -56px;
+}
+.dropdown-submenu {
+  position: relative;
+}
+.dropdown-submenu>.dropdown-menu {
+  top: 0;
+  left: 100%;
+  margin-top: -6px;
+  margin-left: -1px;
+  border-radius: 0 6px 6px 6px;
+}
+.dropdown-submenu:hover>.dropdown-menu {
+  display: block;
+}
+.dropdown-submenu>a:after {
+  display: block;
+  content: " ";
+  float: right;
+  width: 0;
+  height: 0;
+  border-color: transparent;
+  border-style: solid;
+  border-width: 5px 0 5px 5px;
+  border-left-color: #cccccc;
+  margin-top: 5px;
+  margin-right: -10px;
+}
+.dropdown-submenu:hover>a:after {
+  border-left-color: #ffffff;
+}
+.dropdown-submenu.pull-left {
+  float: none;
+}
+.dropdown-submenu.pull-left>.dropdown-menu {
+  left: -100%;
+  margin-left: 10px;
+  border-radius: 6px 0 6px 6px;
+}
+</style>
+
+<script>
+// manage active state of menu based on current page
+$(document).ready(function () {
+  // active menu anchor
+  href = window.location.pathname
+  href = href.substr(href.lastIndexOf('/') + 1)
+  if (href === "")
+    href = "index.html";
+  var menuAnchor = $('a[href="' + href + '"]');
+
+  // mark it active
+  menuAnchor.parent().addClass('active');
+
+  // if it's got a parent navbar menu mark it active as well
+  menuAnchor.closest('li.dropdown').addClass('active');
+});
+</script>
+
+<!-- tabsets -->
+
+<style type="text/css">
+.tabset-dropdown > .nav-tabs {
+  display: inline-table;
+  max-height: 500px;
+  min-height: 44px;
+  overflow-y: auto;
+  background: white;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+}
+
+.tabset-dropdown > .nav-tabs > li.active:before {
+  content: "";
+  font-family: 'Glyphicons Halflings';
+  display: inline-block;
+  padding: 10px;
+  border-right: 1px solid #ddd;
+}
+
+.tabset-dropdown > .nav-tabs.nav-tabs-open > li.active:before {
+  content: "&#xe258;";
+  border: none;
+}
+
+.tabset-dropdown > .nav-tabs.nav-tabs-open:before {
+  content: "";
+  font-family: 'Glyphicons Halflings';
+  display: inline-block;
+  padding: 10px;
+  border-right: 1px solid #ddd;
+}
+
+.tabset-dropdown > .nav-tabs > li.active {
+  display: block;
+}
+
+.tabset-dropdown > .nav-tabs > li > a,
+.tabset-dropdown > .nav-tabs > li > a:focus,
+.tabset-dropdown > .nav-tabs > li > a:hover {
+  border: none;
+  display: inline-block;
+  border-radius: 4px;
+  background-color: transparent;
+}
+
+.tabset-dropdown > .nav-tabs.nav-tabs-open > li {
+  display: block;
+  float: none;
+}
+
+.tabset-dropdown > .nav-tabs > li {
+  display: none;
+}
+</style>
+
+<!-- code folding -->
+
+
+
+
+</head>
+
+<body>
+
+
+<div class="container-fluid main-container">
+
+
+
+
+<div class="navbar navbar-default  navbar-fixed-top" role="navigation">
+  <div class="container">
+    <div class="navbar-header">
+      <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar">
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+      <a class="navbar-brand" href="index.html">Multivariate Madness</a>
+    </div>
+    <div id="navbar" class="navbar-collapse collapse">
+      <ul class="nav navbar-nav">
+        <li>
+  <a href="index.html">Introduction</a>
+</li>
+<li>
+  <a href="design.html">Design</a>
+</li>
+<li>
+  <a href="data.html">Data</a>
+</li>
+<li>
+  <a href="summary.html">Summary Statistics</a>
+</li>
+<li>
+  <a href="factor_analysis.html">Factor Analysis</a>
+</li>
+<li>
+  <a href="ordination.html">Ordination</a>
+</li>
+<li>
+  <a href="cluster_analysis.html">Cluster Analysis</a>
+</li>
+<li>
+  <a href="conclusions.html">Conclusions</a>
+</li>
+<li>
+  <a href="acknowledgements.html">Final Thoughts</a>
+</li>
+      </ul>
+      <ul class="nav navbar-nav navbar-right">
+        
+      </ul>
+    </div><!--/.nav-collapse -->
+  </div><!--/.container -->
+</div><!--/.navbar -->
+
+<div class="fluid-row" id="header">
+
+
+
+<h1 class="title toc-ignore">Descriptive Plots and Summary Statistics</h1>
+
+</div>
+
+
+<p>Before completing any specific multivariate analysis, we will do some initial analysis of our data’s properties. We will first consider the distributions of our variables, looking at pairwise relationships and multivariate normality. Then, we will look at some basic summary statistics about each variable (mean, standard error, minimum, maximum). Notably, each of these analyses will filter out non-numeric variables such as team name and conference, as well as categorical variables like seed.</p>
+<div id="pairwise-relationships" class="section level2">
+<h2>Pairwise Relationships</h2>
+<p>As the first check of the validity of our data, we use a large plot of linearity, correlations, and histograms. This will allow us to gauge whether we need to transform any of our variables to achieve normality and linearity (useful in PCA, factor analysis, etc.) We already applied a logarithmic transformation to the number of tournament games played (a naturally logarithmic indicator due to the tournament structure). And otherwise, we see almost all linear or cloud-like relationships, verifying that no further transformations are needed for our multivariate techniques. Furthermore, the histograms of the variables themselves (on the diagonal elements) seem relatively normal, a good sign for the multivariate normality of our total data.</p>
+<p><img src="summary_files/figure-html/megaplot-1.png" width="672" style="display: block; margin: auto;" /></p>
+</div>
+<div id="multivariate-normality" class="section level2">
+<h2>Multivariate Normality</h2>
+<p>Making a chi-squared quantile plot, our data appears to follow an approximately multivariate normal distribution. There is some deviation for the larger quantiles, but this is mostly due to the tournament variables (removing them increases the normality—probably due to the small sample size of tournament games). We don’t use these variables in many of our analyses, especially those that require normality, so our data should work well for any of the following methods.  <img src="summary_files/figure-html/csq-1.png" width="672" style="display: block; margin: auto;" /></p>
+</div>
+<div id="summary-statistics" class="section level2">
+<h2>Summary Statistics</h2>
+<p>Now, to get a holistic view of our variables individually, we will look at the following summary table, which lists their mean, standard error, minimum, and maximum among all of the 271 teams. Looking at the results, we see quite obviously that they fall on substantially differing scales. For example, adjusted winning percentage (awp) will only take values between 0 and 1, while points typically takes values between 60 and 90. We can see this more concretely by looking at the standard errors, which vary from as low as 0.003 for RPI and strength of schedule to as high as 0.456 for efficiency. Therefore, we definitely want to standardize our data before completing any analysis sensitive to scale (e.g. cluster analysis). </p>
+<table style="width:99%;">
+<colgroup>
+<col width="44%" />
+<col width="13%" />
+<col width="15%" />
+<col width="12%" />
+<col width="12%" />
+</colgroup>
+<thead>
+<tr class="header">
+<th align="left"> </th>
+<th align="left">mean</th>
+<th align="left">se</th>
+<th align="left">min</th>
+<th align="left">max</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td align="left"><strong>points</strong></td>
+<td align="left">75.63</td>
+<td align="left">0.3048</td>
+<td align="left">61.5</td>
+<td align="left">87.6</td>
+</tr>
+<tr class="even">
+<td align="left"><strong>rebounds</strong></td>
+<td align="left">33.49</td>
+<td align="left">0.148</td>
+<td align="left">26.66</td>
+<td align="left">40.5</td>
+</tr>
+<tr class="odd">
+<td align="left"><strong>assists</strong></td>
+<td align="left">14.43</td>
+<td align="left">0.1051</td>
+<td align="left">10</td>
+<td align="left">19.5</td>
+</tr>
+<tr class="even">
+<td align="left"><strong>steals</strong></td>
+<td align="left">6.542</td>
+<td align="left">0.06952</td>
+<td align="left">3.76</td>
+<td align="left">10.74</td>
+</tr>
+<tr class="odd">
+<td align="left"><strong>blocks</strong></td>
+<td align="left">3.952</td>
+<td align="left">0.06105</td>
+<td align="left">1.57</td>
+<td align="left">7.79</td>
+</tr>
+<tr class="even">
+<td align="left"><strong>turnovers</strong></td>
+<td align="left">12.03</td>
+<td align="left">0.07599</td>
+<td align="left">7.43</td>
+<td align="left">16.69</td>
+</tr>
+<tr class="odd">
+<td align="left"><strong>blocked_att</strong></td>
+<td align="left">2.361</td>
+<td align="left">0.07282</td>
+<td align="left">0.17</td>
+<td align="left">5</td>
+</tr>
+<tr class="even">
+<td align="left"><strong>personal_fouls</strong></td>
+<td align="left">17.66</td>
+<td align="left">0.1103</td>
+<td align="left">12.53</td>
+<td align="left">24.06</td>
+</tr>
+<tr class="odd">
+<td align="left"><strong>flagrant_fouls</strong></td>
+<td align="left">0.03642</td>
+<td align="left">0.002847</td>
+<td align="left">0</td>
+<td align="left">0.24</td>
+</tr>
+<tr class="even">
+<td align="left"><strong>efficiency</strong></td>
+<td align="left">84.93</td>
+<td align="left">0.4556</td>
+<td align="left">67.17</td>
+<td align="left">110.4</td>
+</tr>
+<tr class="odd">
+<td align="left"><strong>true_shooting_pct</strong></td>
+<td align="left">0.5655</td>
+<td align="left">0.001456</td>
+<td align="left">0.498</td>
+<td align="left">0.628</td>
+</tr>
+<tr class="even">
+<td align="left"><strong>fast_break_pts</strong></td>
+<td align="left">7.387</td>
+<td align="left">0.1566</td>
+<td align="left">2.29</td>
+<td align="left">16.67</td>
+</tr>
+<tr class="odd">
+<td align="left"><strong>points_off_turnovers</strong></td>
+<td align="left">15.3</td>
+<td align="left">0.1479</td>
+<td align="left">9.97</td>
+<td align="left">25.66</td>
+</tr>
+<tr class="even">
+<td align="left"><strong>points_in_paint</strong></td>
+<td align="left">31.41</td>
+<td align="left">0.235</td>
+<td align="left">21.07</td>
+<td align="left">49.34</td>
+</tr>
+<tr class="odd">
+<td align="left"><strong>second_chance_pts</strong></td>
+<td align="left">11.2</td>
+<td align="left">0.1179</td>
+<td align="left">6.03</td>
+<td align="left">19.89</td>
+</tr>
+<tr class="even">
+<td align="left"><strong>opp_points</strong></td>
+<td align="left">67.55</td>
+<td align="left">0.3174</td>
+<td align="left">54</td>
+<td align="left">81.7</td>
+</tr>
+<tr class="odd">
+<td align="left"><strong>opp_rebounds</strong></td>
+<td align="left">30.34</td>
+<td align="left">0.1456</td>
+<td align="left">23.76</td>
+<td align="left">37.06</td>
+</tr>
+<tr class="even">
+<td align="left"><strong>opp_assists</strong></td>
+<td align="left">12.06</td>
+<td align="left">0.09512</td>
+<td align="left">7.7</td>
+<td align="left">16</td>
+</tr>
+<tr class="odd">
+<td align="left"><strong>opp_turnovers</strong></td>
+<td align="left">13.05</td>
+<td align="left">0.1044</td>
+<td align="left">8.94</td>
+<td align="left">20.03</td>
+</tr>
+<tr class="even">
+<td align="left"><strong>opp_blocked_att</strong></td>
+<td align="left">2.877</td>
+<td align="left">0.1082</td>
+<td align="left">0.14</td>
+<td align="left">7.79</td>
+</tr>
+<tr class="odd">
+<td align="left"><strong>opp_personal_fouls</strong></td>
+<td align="left">18.67</td>
+<td align="left">0.09543</td>
+<td align="left">15</td>
+<td align="left">22.87</td>
+</tr>
+<tr class="even">
+<td align="left"><strong>opp_flagrant_fouls</strong></td>
+<td align="left">0.04413</td>
+<td align="left">0.003205</td>
+<td align="left">0</td>
+<td align="left">0.29</td>
+</tr>
+<tr class="odd">
+<td align="left"><strong>opp_true_shooting_pct</strong></td>
+<td align="left">0.5186</td>
+<td align="left">0.001374</td>
+<td align="left">0.439</td>
+<td align="left">0.582</td>
+</tr>
+<tr class="even">
+<td align="left"><strong>opp_fast_break_pts</strong></td>
+<td align="left">5.644</td>
+<td align="left">0.1072</td>
+<td align="left">2.06</td>
+<td align="left">11.76</td>
+</tr>
+<tr class="odd">
+<td align="left"><strong>opp_points_off_turnovers</strong></td>
+<td align="left">12.6</td>
+<td align="left">0.1141</td>
+<td align="left">7.83</td>
+<td align="left">21.47</td>
+</tr>
+<tr class="even">
+<td align="left"><strong>opp_points_in_paint</strong></td>
+<td align="left">27.27</td>
+<td align="left">0.219</td>
+<td align="left">18.41</td>
+<td align="left">37.49</td>
+</tr>
+<tr class="odd">
+<td align="left"><strong>opp_second_chance_pts</strong></td>
+<td align="left">9.869</td>
+<td align="left">0.09684</td>
+<td align="left">6.82</td>
+<td align="left">17.75</td>
+</tr>
+<tr class="even">
+<td align="left"><strong>awp</strong></td>
+<td align="left">0.7116</td>
+<td align="left">0.006319</td>
+<td align="left">0.4941</td>
+<td align="left">0.9718</td>
+</tr>
+<tr class="odd">
+<td align="left"><strong>owp</strong></td>
+<td align="left">0.5453</td>
+<td align="left">0.003169</td>
+<td align="left">0.3778</td>
+<td align="left">0.6693</td>
+</tr>
+<tr class="even">
+<td align="left"><strong>sos</strong></td>
+<td align="left">0.5385</td>
+<td align="left">0.002647</td>
+<td align="left">0.402</td>
+<td align="left">0.6357</td>
+</tr>
+<tr class="odd">
+<td align="left"><strong>rpi</strong></td>
+<td align="left">0.5817</td>
+<td align="left">0.002587</td>
+<td align="left">0.4412</td>
+<td align="left">0.6823</td>
+</tr>
+<tr class="even">
+<td align="left"><strong>log_tourn_games_played</strong></td>
+<td align="left">0.5223</td>
+<td align="left">0.03461</td>
+<td align="left">0</td>
+<td align="left">1.792</td>
+</tr>
+<tr class="odd">
+<td align="left"><strong>tourn_point_diff</strong></td>
+<td align="left">-4.265</td>
+<td align="left">0.6247</td>
+<td align="left">-39</td>
+<td align="left">20.7</td>
+</tr>
+<tr class="even">
+<td align="left"><strong>tourn_points</strong></td>
+<td align="left">68.89</td>
+<td align="left">0.5562</td>
+<td align="left">44</td>
+<td align="left">91</td>
+</tr>
+<tr class="odd">
+<td align="left"><strong>tourn_assists</strong></td>
+<td align="left">12.02</td>
+<td align="left">0.1901</td>
+<td align="left">3</td>
+<td align="left">22</td>
+</tr>
+<tr class="even">
+<td align="left"><strong>tourn_fast_break_pts</strong></td>
+<td align="left">6.539</td>
+<td align="left">0.3035</td>
+<td align="left">0</td>
+<td align="left">24</td>
+</tr>
+<tr class="odd">
+<td align="left"><strong>tourn_second_chance_pts</strong></td>
+<td align="left">10.51</td>
+<td align="left">0.2752</td>
+<td align="left">0</td>
+<td align="left">36</td>
+</tr>
+<tr class="even">
+<td align="left"><strong>tourn_personal_fouls</strong></td>
+<td align="left">17.96</td>
+<td align="left">0.2268</td>
+<td align="left">10</td>
+<td align="left">33</td>
+</tr>
+<tr class="odd">
+<td align="left"><strong>tourn_flagrant_fouls</strong></td>
+<td align="left">0.07148</td>
+<td align="left">0.01508</td>
+<td align="left">0</td>
+<td align="left">2</td>
+</tr>
+<tr class="even">
+<td align="left"><strong>tourn_blocked_att</strong></td>
+<td align="left">3.665</td>
+<td align="left">0.1182</td>
+<td align="left">0</td>
+<td align="left">15</td>
+</tr>
+<tr class="odd">
+<td align="left"><strong>tourn_opp_efficiency</strong></td>
+<td align="left">58.46</td>
+<td align="left">1.46</td>
+<td align="left">19</td>
+<td align="left">118</td>
+</tr>
+<tr class="even">
+<td align="left"><strong>tourn_opp_field_goal_pct</strong></td>
+<td align="left">1.747</td>
+<td align="left">0.1108</td>
+<td align="left">0</td>
+<td align="left">9</td>
+</tr>
+<tr class="odd">
+<td align="left"><strong>tourn_opp_points</strong></td>
+<td align="left">42.16</td>
+<td align="left">1.912</td>
+<td align="left">2</td>
+<td align="left">95</td>
+</tr>
+<tr class="even">
+<td align="left"><strong>tourn_opp_assists</strong></td>
+<td align="left">18.13</td>
+<td align="left">0.4056</td>
+<td align="left">4.5</td>
+<td align="left">34</td>
+</tr>
+<tr class="odd">
+<td align="left"><strong>tourn_opp_points_in_paint</strong></td>
+<td align="left">15.28</td>
+<td align="left">0.9433</td>
+<td align="left">0.343</td>
+<td align="left">50</td>
+</tr>
+<tr class="even">
+<td align="left"><strong>tourn_opp_blocked_att</strong></td>
+<td align="left">10.15</td>
+<td align="left">0.4616</td>
+<td align="left">0</td>
+<td align="left">27</td>
+</tr>
+<tr class="odd">
+<td align="left"><strong>tourn_opp_personal_fouls</strong></td>
+<td align="left">10.33</td>
+<td align="left">0.4252</td>
+<td align="left">0</td>
+<td align="left">25</td>
+</tr>
+<tr class="even">
+<td align="left"><strong>tourn_opp_flagrant_fouls</strong></td>
+<td align="left">5.433</td>
+<td align="left">0.3544</td>
+<td align="left">0</td>
+<td align="left">20</td>
+</tr>
+</tbody>
+</table>
+</div>
+
+
+
+
+</div>
+
+<script>
+
+// add bootstrap table styles to pandoc tables
+function bootstrapStylePandocTables() {
+  $('tr.odd').parent('tbody').parent('table').addClass('table table-condensed');
+}
+$(document).ready(function () {
+  bootstrapStylePandocTables();
+});
+
+
+</script>
+
+<!-- tabsets -->
+
+<script>
+$(document).ready(function () {
+  window.buildTabsets("TOC");
+});
+
+$(document).ready(function () {
+  $('.tabset-dropdown > .nav-tabs > li').click(function () {
+    $(this).parent().toggleClass('nav-tabs-open')
+  });
+});
+</script>
+
+<!-- code folding -->
+
+
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+  (function () {
+    var script = document.createElement("script");
+    script.type = "text/javascript";
+    script.src  = "https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML";
+    document.getElementsByTagName("head")[0].appendChild(script);
+  })();
+</script>
+
+</body>
+</html>

@@ -4,7 +4,23 @@ navbar:
   title: "Multivariate Madness"
   left:
     - text: "Introduction"
-      href: introduction.html
+      href: index.html
+    - text: "Design"
+      href: design.html
+    - text: "Data"
+      href: data.html
+    - text: "Summary Statistics"
+      href: summary.html
+    - text: "Factor Analysis"
+      href: factor_analysis.html
+    - text: "Ordination"
+      href: ordination.html
+    - text: "Cluster Analysis"
+      href: cluster_analysis.html
+    - text: "Conclusions"
+      href: conclusions.html
+    - text: "Final Thoughts"
+      href: acknowledgements.html
 output:
   html_document:
     theme: cosmo

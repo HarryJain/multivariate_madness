@@ -1,0 +1,41 @@
+---
+title: "Descriptive Plots and Summary Statistics"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+```{r loaddata, include = FALSE}
+source("load_data.R")
+```
+
+Before completing any specific multivariate analysis, we will do some initial analysis of our data's properties. We will first consider the distributions of our variables, looking at pairwise relationships and multivariate normality. Then, we will look at some basic summary statistics about each variable (mean, standard error, minimum, maximum). Notably, each of these analyses will filter out non-numeric variables such as team name and conference, as well as categorical variables like seed.
+
+## Pairwise Relationships
+As the first check of the validity of our data, we use a large plot of linearity, correlations, and histograms. This will allow us to gauge whether we need to transform any of our variables to achieve normality and linearity (useful in PCA, factor analysis, etc.) We already applied a logarithmic transformation to the number of tournament games played (a naturally logarithmic indicator due to the tournament structure). And otherwise, we see almost all linear or cloud-like relationships, verifying that no further transformations are needed for our multivariate techniques. Furthermore, the histograms of the variables themselves (on the diagonal elements) seem relatively normal, a good sign for the multivariate normality of our total data.
+
+```{r megaplot, echo = FALSE, fig.align = 'center'}
+# A plot of linearity, correlation, and histograms all at once
+chart.Correlation(TD.all[, numvars], histogram = TRUE, pch = 19)
+```
+
+## Multivariate Normality
+Making a chi-squared quantile plot, our data appears to follow an approximately multivariate normal distribution. There is some deviation for the larger quantiles, but this is mostly due to the tournament variables (removing them increases the normality---probably due to the small sample size of tournament games). We don't use these variables in many of our analyses, especially those that require normality, so our data should work well for any of the following methods.
+\bigbreak
+```{r csq, echo = FALSE, fig.align = 'center'}
+# Load CSQPlot function from Jonathon's Website
+source("http://www.reuningscherer.net/STAT660/R/CSQPlot.r.txt")
+
+# CSQ plot on all the dimensions/variables chosen for the PCA analysis 
+#   (quite normal) - remove column of team names
+CSQPlot(TD.all[, numvars], label = "NCAAMB Data")
+```
+
+## Summary Statistics
+Now, to get a holistic view of our variables individually, we will look at the following summary table, which lists their mean, standard error, minimum, and maximum among all of the 271 teams. Looking at the results, we see quite obviously that they fall on substantially differing scales. For example, adjusted winning percentage (awp) will only take values between 0 and 1, while points typically takes values between 60 and 90. We can see this more concretely by looking at the standard errors, which vary from as low as 0.003 for RPI and strength of schedule to as high as 0.456 for efficiency. Therefore, we definitely want to standardize our data before completing any analysis sensitive to scale (e.g. cluster analysis).
+\bigbreak
+```{r summary, echo = FALSE}
+pander(describe(TD.all[, numvars])[, c("mean", "se", "min", "max")], justify = "left")
+```

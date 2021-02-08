@@ -1,0 +1,1201 @@
+<!DOCTYPE html>
+
+<html>
+
+<head>
+
+<meta charset="utf-8" />
+<meta name="generator" content="pandoc" />
+<meta http-equiv="X-UA-Compatible" content="IE=EDGE" />
+
+
+
+
+<title>Cluster Analysis</title>
+
+<script src="site_libs/header-attrs-2.6/header-attrs.js"></script>
+<script src="site_libs/jquery-1.11.3/jquery.min.js"></script>
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<link href="site_libs/bootstrap-3.3.5/css/cosmo.min.css" rel="stylesheet" />
+<script src="site_libs/bootstrap-3.3.5/js/bootstrap.min.js"></script>
+<script src="site_libs/bootstrap-3.3.5/shim/html5shiv.min.js"></script>
+<script src="site_libs/bootstrap-3.3.5/shim/respond.min.js"></script>
+<script src="site_libs/navigation-1.1/tabsets.js"></script>
+<link href="site_libs/highlightjs-9.12.0/default.css" rel="stylesheet" />
+<script src="site_libs/highlightjs-9.12.0/highlight.js"></script>
+
+<style type="text/css">
+  code{white-space: pre-wrap;}
+  span.smallcaps{font-variant: small-caps;}
+  span.underline{text-decoration: underline;}
+  div.column{display: inline-block; vertical-align: top; width: 50%;}
+  div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+  ul.task-list{list-style: none;}
+    </style>
+
+<style type="text/css">code{white-space: pre;}</style>
+<style type="text/css">
+  pre:not([class]) {
+    background-color: white;
+  }
+</style>
+<script type="text/javascript">
+if (window.hljs) {
+  hljs.configure({languages: []});
+  hljs.initHighlightingOnLoad();
+  if (document.readyState && document.readyState === "complete") {
+    window.setTimeout(function() { hljs.initHighlighting(); }, 0);
+  }
+}
+</script>
+
+
+
+<style type="text/css">
+h1 {
+  font-size: 34px;
+}
+h1.title {
+  font-size: 38px;
+}
+h2 {
+  font-size: 30px;
+}
+h3 {
+  font-size: 24px;
+}
+h4 {
+  font-size: 18px;
+}
+h5 {
+  font-size: 16px;
+}
+h6 {
+  font-size: 12px;
+}
+.table th:not([align]) {
+  text-align: left;
+}
+</style>
+
+
+
+
+
+<style type = "text/css">
+.main-container {
+  max-width: 940px;
+  margin-left: auto;
+  margin-right: auto;
+}
+code {
+  color: inherit;
+  background-color: rgba(0, 0, 0, 0.04);
+}
+img {
+  max-width:100%;
+}
+.tabbed-pane {
+  padding-top: 12px;
+}
+.html-widget {
+  margin-bottom: 20px;
+}
+button.code-folding-btn:focus {
+  outline: none;
+}
+summary {
+  display: list-item;
+}
+</style>
+
+
+<style type="text/css">
+/* padding for bootstrap navbar */
+body {
+  padding-top: 51px;
+  padding-bottom: 40px;
+}
+/* offset scroll position for anchor links (for fixed navbar)  */
+.section h1 {
+  padding-top: 56px;
+  margin-top: -56px;
+}
+.section h2 {
+  padding-top: 56px;
+  margin-top: -56px;
+}
+.section h3 {
+  padding-top: 56px;
+  margin-top: -56px;
+}
+.section h4 {
+  padding-top: 56px;
+  margin-top: -56px;
+}
+.section h5 {
+  padding-top: 56px;
+  margin-top: -56px;
+}
+.section h6 {
+  padding-top: 56px;
+  margin-top: -56px;
+}
+.dropdown-submenu {
+  position: relative;
+}
+.dropdown-submenu>.dropdown-menu {
+  top: 0;
+  left: 100%;
+  margin-top: -6px;
+  margin-left: -1px;
+  border-radius: 0 6px 6px 6px;
+}
+.dropdown-submenu:hover>.dropdown-menu {
+  display: block;
+}
+.dropdown-submenu>a:after {
+  display: block;
+  content: " ";
+  float: right;
+  width: 0;
+  height: 0;
+  border-color: transparent;
+  border-style: solid;
+  border-width: 5px 0 5px 5px;
+  border-left-color: #cccccc;
+  margin-top: 5px;
+  margin-right: -10px;
+}
+.dropdown-submenu:hover>a:after {
+  border-left-color: #ffffff;
+}
+.dropdown-submenu.pull-left {
+  float: none;
+}
+.dropdown-submenu.pull-left>.dropdown-menu {
+  left: -100%;
+  margin-left: 10px;
+  border-radius: 6px 0 6px 6px;
+}
+</style>
+
+<script>
+// manage active state of menu based on current page
+$(document).ready(function () {
+  // active menu anchor
+  href = window.location.pathname
+  href = href.substr(href.lastIndexOf('/') + 1)
+  if (href === "")
+    href = "index.html";
+  var menuAnchor = $('a[href="' + href + '"]');
+
+  // mark it active
+  menuAnchor.parent().addClass('active');
+
+  // if it's got a parent navbar menu mark it active as well
+  menuAnchor.closest('li.dropdown').addClass('active');
+});
+</script>
+
+<!-- tabsets -->
+
+<style type="text/css">
+.tabset-dropdown > .nav-tabs {
+  display: inline-table;
+  max-height: 500px;
+  min-height: 44px;
+  overflow-y: auto;
+  background: white;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+}
+
+.tabset-dropdown > .nav-tabs > li.active:before {
+  content: "";
+  font-family: 'Glyphicons Halflings';
+  display: inline-block;
+  padding: 10px;
+  border-right: 1px solid #ddd;
+}
+
+.tabset-dropdown > .nav-tabs.nav-tabs-open > li.active:before {
+  content: "&#xe258;";
+  border: none;
+}
+
+.tabset-dropdown > .nav-tabs.nav-tabs-open:before {
+  content: "";
+  font-family: 'Glyphicons Halflings';
+  display: inline-block;
+  padding: 10px;
+  border-right: 1px solid #ddd;
+}
+
+.tabset-dropdown > .nav-tabs > li.active {
+  display: block;
+}
+
+.tabset-dropdown > .nav-tabs > li > a,
+.tabset-dropdown > .nav-tabs > li > a:focus,
+.tabset-dropdown > .nav-tabs > li > a:hover {
+  border: none;
+  display: inline-block;
+  border-radius: 4px;
+  background-color: transparent;
+}
+
+.tabset-dropdown > .nav-tabs.nav-tabs-open > li {
+  display: block;
+  float: none;
+}
+
+.tabset-dropdown > .nav-tabs > li {
+  display: none;
+}
+</style>
+
+<!-- code folding -->
+
+
+
+
+</head>
+
+<body>
+
+
+<div class="container-fluid main-container">
+
+
+
+
+<div class="navbar navbar-default  navbar-fixed-top" role="navigation">
+  <div class="container">
+    <div class="navbar-header">
+      <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar">
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+      <a class="navbar-brand" href="index.html">Multivariate Madness</a>
+    </div>
+    <div id="navbar" class="navbar-collapse collapse">
+      <ul class="nav navbar-nav">
+        <li>
+  <a href="index.html">Introduction</a>
+</li>
+<li>
+  <a href="design.html">Design</a>
+</li>
+<li>
+  <a href="data.html">Data</a>
+</li>
+<li>
+  <a href="summary.html">Summary Statistics</a>
+</li>
+<li>
+  <a href="factor_analysis.html">Factor Analysis</a>
+</li>
+<li>
+  <a href="ordination.html">Ordination</a>
+</li>
+<li>
+  <a href="cluster_analysis.html">Cluster Analysis</a>
+</li>
+<li>
+  <a href="conclusions.html">Conclusions</a>
+</li>
+<li>
+  <a href="acknowledgements.html">Final Thoughts</a>
+</li>
+      </ul>
+      <ul class="nav navbar-nav navbar-right">
+        
+      </ul>
+    </div><!--/.nav-collapse -->
+  </div><!--/.container -->
+</div><!--/.navbar -->
+
+<div class="fluid-row" id="header">
+
+
+
+<h1 class="title toc-ignore">Cluster Analysis</h1>
+
+</div>
+
+
+<p>As our final multivariate method, let’s apply cluster analysis to our data. This will allow us to use our subset of variables to find clusters of teams in multidimensional space. Then, we can analyze these clusters for common characteristics and potential predictions of tournament success.</p>
+<div id="hierarchial-cluster-analysis" class="section level2">
+<h2>Hierarchial Cluster Analysis</h2>
+<p>To start, let’s complete some hierarchial cluster analyses with various distance and agglomeration methods. To do so, we create a generalized data set and function, try several different metric combinations, and analyze the results, choosing an appropriate number of clusters and considering their meaning.</p>
+<div id="euclidean-distance-and-complete-linkage" class="section level3">
+<h3>Euclidean Distance and Complete Linkage</h3>
+<p>First, let’s consider using a basic Euclidean distance metric along with complete linkage. We can see that this results in a well-structured dendrogram with distinct clusters and a relatively “bushy” tree. Now, considering the number of clusters to retain, we visually see either <span class="math inline">\(3\)</span> or <span class="math inline">\(4\)</span> distinct subtrees we could separate into. However, looking at the plot below, we see that the RSSTD statistic seems to take a local minimum value at around <span class="math inline">\(3\)</span>, where the SPR and RS graphs also seem to flatten out. Upon trying both <span class="math inline">\(3\)</span> and <span class="math inline">\(4\)</span> clusters, <span class="math inline">\(3\)</span> seemed to provide a better degree of separation between groups in both principal component and discriminant function space, confirming <span class="math inline">\(3\)</span> groups as the correct choice.</p>
+<p>Now, considering potential interpretations for these clusters, we see that Cluster 1 has a high proportion of teams who ended up with low seeds and a high number of tournament games played, implying that the characteristics of this group yield general tournament success. Cluster 2 is the largest group, encompassing teams with many different seeds and varying levels of tournament success. However, this group does contain the eventual champion Virginia, as well as the runner-up Texas Tech; thus, this group could also contain high achieving teams. Cluster 3 seems to contain mostly higher-seeded teams that only played a few tournament games, with notable standouts of Auburn and Purdue. However, being grouped with these teams would generally imply a lesser overall quality and hence lower chance of success.</p>
+<p><img src="cluster_analysis_files/figure-html/unnamed-chunk-2-1.png" width="672" /></p>
+<pre><code>## [1] &quot;Teams in Cluster  1&quot;
+##  [1] &quot;North Carolina Tar Heels_2018 Seed: 1 Tourn Games Played: 3&quot;
+##  [2] &quot;Utah State Aggies_2018 Seed: 8 Tourn Games Played: 1&quot;       
+##  [3] &quot;Buffalo Bulls_2018 Seed: 6 Tourn Games Played: 2&quot;           
+##  [4] &quot;Nevada Wolf Pack_2018 Seed: 7 Tourn Games Played: 1&quot;        
+##  [5] &quot;Gonzaga Bulldogs_2018 Seed: 1 Tourn Games Played: 4&quot;        
+##  [6] &quot;Murray State Racers_2018 Seed: 12 Tourn Games Played: 2&quot;    
+##  [7] &quot;Northern Kentucky Norse_2018 Seed: 14 Tourn Games Played: 1&quot;
+##  [8] &quot;Yale Bulldogs_2018 Seed: 14 Tourn Games Played: 1&quot;          
+##  [9] &quot;Duke Blue Devils_2018 Seed: 1 Tourn Games Played: 4&quot;        
+## [10] &quot;Belmont Bruins_2018 Seed: 11 Tourn Games Played: 2&quot;         
+## [11] &quot;Michigan State Spartans_2018 Seed: 2 Tourn Games Played: 5&quot; 
+## [12] &quot;Tennessee Volunteers_2018 Seed: 2 Tourn Games Played: 3&quot;    
+## [1] &quot; &quot;
+## [1] &quot;Teams in Cluster  2&quot;
+##  [1] &quot;Houston Cougars_2018 Seed: 3 Tourn Games Played: 3&quot;               
+##  [2] &quot;Wofford Terriers_2018 Seed: 7 Tourn Games Played: 2&quot;              
+##  [3] &quot;Northeastern Huskies_2018 Seed: 13 Tourn Games Played: 1&quot;         
+##  [4] &quot;New Mexico State Aggies_2018 Seed: 12 Tourn Games Played: 1&quot;      
+##  [5] &quot;Ohio State Buckeyes_2018 Seed: 11 Tourn Games Played: 2&quot;          
+##  [6] &quot;Kentucky Wildcats_2018 Seed: 2 Tourn Games Played: 4&quot;             
+##  [7] &quot;Michigan Wolverines_2018 Seed: 2 Tourn Games Played: 3&quot;           
+##  [8] &quot;Baylor Bears_2018 Seed: 9 Tourn Games Played: 2&quot;                  
+##  [9] &quot;Vermont Catamounts_2018 Seed: 13 Tourn Games Played: 1&quot;           
+## [10] &quot;Florida State Seminoles_2018 Seed: 4 Tourn Games Played: 3&quot;       
+## [11] &quot;Florida Gators_2018 Seed: 10 Tourn Games Played: 2&quot;               
+## [12] &quot;Montana Grizzlies_2018 Seed: 15 Tourn Games Played: 1&quot;            
+## [13] &quot;Marquette Golden Eagles_2018 Seed: 5 Tourn Games Played: 1&quot;       
+## [14] &quot;Texas Tech Red Raiders_2018 Seed: 3 Tourn Games Played: 6&quot;        
+## [15] &quot;Bradley Braves_2018 Seed: 15 Tourn Games Played: 1&quot;               
+## [16] &quot;Saint Louis Billikens_2018 Seed: 13 Tourn Games Played: 1&quot;        
+## [17] &quot;Maryland Terrapins_2018 Seed: 6 Tourn Games Played: 2&quot;            
+## [18] &quot;UCF Knights_2018 Seed: 9 Tourn Games Played: 2&quot;                   
+## [19] &quot;Minnesota Golden Gophers_2018 Seed: 10 Tourn Games Played: 2&quot;     
+## [20] &quot;Louisville Cardinals_2018 Seed: 7 Tourn Games Played: 1&quot;          
+## [21] &quot;Virginia Tech Hokies_2018 Seed: 4 Tourn Games Played: 3&quot;          
+## [22] &quot;North Dakota State Bison_2018 Seed: 16 Tourn Games Played: 2&quot;     
+## [23] &quot;Liberty Flames_2018 Seed: 12 Tourn Games Played: 2&quot;               
+## [24] &quot;Virginia Commonwealth Rams_2018 Seed: 8 Tourn Games Played: 1&quot;    
+## [25] &quot;Colgate Raiders_2018 Seed: 15 Tourn Games Played: 1&quot;              
+## [26] &quot;Wisconsin Badgers_2018 Seed: 5 Tourn Games Played: 1&quot;             
+## [27] &quot;Saint Mary&#39;s Gaels_2018 Seed: 11 Tourn Games Played: 1&quot;           
+## [28] &quot;Kansas State Wildcats_2018 Seed: 4 Tourn Games Played: 1&quot;         
+## [29] &quot;Virginia Cavaliers_2018 Seed: 1 Tourn Games Played: 6&quot;            
+## [30] &quot;Cincinnati Bearcats_2018 Seed: 7 Tourn Games Played: 1&quot;           
+## [31] &quot;Gardner-Webb Runnin&#39; Bulldogs_2018 Seed: 16 Tourn Games Played: 1&quot;
+## [32] &quot;Old Dominion Monarchs_2018 Seed: 14 Tourn Games Played: 1&quot;        
+## [33] &quot;Oregon Ducks_2018 Seed: 12 Tourn Games Played: 3&quot;                 
+## [34] &quot;Oklahoma Sooners_2018 Seed: 9 Tourn Games Played: 2&quot;              
+## [35] &quot;UC Irvine Anteaters_2018 Seed: 13 Tourn Games Played: 2&quot;          
+## [1] &quot; &quot;
+## [1] &quot;Teams in Cluster  3&quot;
+##  [1] &quot;Iona Gaels_2018 Seed: 16 Tourn Games Played: 1&quot;                   
+##  [2] &quot;Seton Hall Pirates_2018 Seed: 10 Tourn Games Played: 1&quot;           
+##  [3] &quot;Georgia State Panthers_2018 Seed: 14 Tourn Games Played: 1&quot;       
+##  [4] &quot;Auburn Tigers_2018 Seed: 5 Tourn Games Played: 5&quot;                 
+##  [5] &quot;Kansas Jayhawks_2018 Seed: 4 Tourn Games Played: 2&quot;               
+##  [6] &quot;Washington Huskies_2018 Seed: 9 Tourn Games Played: 2&quot;            
+##  [7] &quot;Abilene Christian Wildcats_2018 Seed: 15 Tourn Games Played: 1&quot;   
+##  [8] &quot;Iowa State Cyclones_2018 Seed: 6 Tourn Games Played: 1&quot;           
+##  [9] &quot;Prairie View A&amp;M Panthers_2018 Seed: 16 Tourn Games Played: 1&quot;    
+## [10] &quot;St. John&#39;s Red Storm_2018 Seed: 11 Tourn Games Played: 1&quot;         
+## [11] &quot;Fairleigh Dickinson Knights_2018 Seed: 16 Tourn Games Played: 2&quot;  
+## [12] &quot;Syracuse Orange_2018 Seed: 8 Tourn Games Played: 1&quot;               
+## [13] &quot;Arizona State Sun Devils_2018 Seed: 11 Tourn Games Played: 2&quot;     
+## [14] &quot;North Carolina Central Eagles_2018 Seed: 16 Tourn Games Played: 1&quot;
+## [15] &quot;Mississippi State Bulldogs_2018 Seed: 5 Tourn Games Played: 1&quot;    
+## [16] &quot;Temple Owls_2018 Seed: 11 Tourn Games Played: 1&quot;                  
+## [17] &quot;LSU Tigers_2018 Seed: 3 Tourn Games Played: 3&quot;                    
+## [18] &quot;Purdue Boilermakers_2018 Seed: 3 Tourn Games Played: 4&quot;           
+## [19] &quot;Iowa Hawkeyes_2018 Seed: 10 Tourn Games Played: 2&quot;                
+## [20] &quot;Ole Miss Rebels_2018 Seed: 8 Tourn Games Played: 1&quot;               
+## [21] &quot;Villanova Wildcats_2018 Seed: 6 Tourn Games Played: 2&quot;            
+## [1] &quot; &quot;
+## [1] &quot;Creating Distance Matrix using euclidean&quot;
+## [1] &quot;Clustering using complete&quot;
+## [1] &quot;Clustering Complete. Access the Cluster object in first element of output&quot;
+## [1] &quot;Calculating RMSSTD&quot;
+## [1] &quot;RMSSTD Done. Access in Element 2&quot;
+## [1] &quot;Calculating RSQ&quot;
+## [1] &quot;RSQ Done. Access in Element 3&quot;
+## [1] &quot;Calculating SPRSQ&quot;
+## [1] &quot;SPRSQ Done. Access in Element 4&quot;
+## [1] &quot;Calculating Cluster Dist. &quot;
+## [1] &quot;CD Done. Access in Element 5&quot;</code></pre>
+<p><img src="cluster_analysis_files/figure-html/unnamed-chunk-2-2.png" width="672" /><img src="cluster_analysis_files/figure-html/unnamed-chunk-2-3.png" width="672" /><img src="cluster_analysis_files/figure-html/unnamed-chunk-2-4.png" width="672" /></p>
+</div>
+<div id="manhattan-distance-and-complete-linkage" class="section level3">
+<h3>Manhattan Distance and Complete Linkage</h3>
+<p>Now, to consider other distance metrics, let’s try using Manhattan distance while keeping complete linkage agglomeration. In this case, we see a much more extented dendrogram in terms of greatest distance between clusters, though it visually has similar levels of bushiness. In terms of number of clusters to retain, this tree is much more ambiguous, as all the plotted metrics are very flat, with few extrema. From the tree structure, there seems to be <span class="math inline">\(5\)</span> significant subtrees (a cluster count where the RS plot seems to flatten out a bit as well), so we decide to keep <span class="math inline">\(5\)</span> clusters. Additionally, while the approximate confidence ellipses overlap significantly at any cluster count over <span class="math inline">\(2\)</span>, the discriminant function plot retains a large level of separation for our choice of <span class="math inline">\(5\)</span> groups.</p>
+<p>Compared to the Euclidean distance results, the groups here are quite different (which is obviously a result of additional groups as well). This Cluster 1 <strong>(note: the group order does not matter)</strong> contains some of the low seed teams, like North Carolina, as well as some of the highest performing teams, like Texas Tech. However, it also has some middle seed teams with only a game or two played, so it is not a surefire success group. The second group generally has high seed teams with few games played, with the notable exception of the Kentucky Wildcats. However, being in this group generally implies a lower level of success. Cluster 3 contains even more lowly teams, with mostly double-digit seeds and single games played (notably Fairleigh Dickinson played <span class="math inline">\(2\)</span> games but one was a play-in game). Cluster 4 has similar characteristics to Cluster 3 with slightly higher performance, even including eventual champion Virginia (implying Virginia’s unique characteristics among successful teams). However, being in either of these groups generally implies a low level of team success (don’t pick these teams for your bracket unless they are truly top seeds). On the other hand, Cluster 5 is comprised of generally successful teams with low seeds and many games played.</p>
+<p><img src="cluster_analysis_files/figure-html/unnamed-chunk-3-1.png" width="672" /></p>
+<pre><code>## [1] &quot;Teams in Cluster  1&quot;
+##  [1] &quot;North Carolina Tar Heels_2018 Seed: 1 Tourn Games Played: 3&quot;  
+##  [2] &quot;Auburn Tigers_2018 Seed: 5 Tourn Games Played: 5&quot;             
+##  [3] &quot;Kansas Jayhawks_2018 Seed: 4 Tourn Games Played: 2&quot;           
+##  [4] &quot;Washington Huskies_2018 Seed: 9 Tourn Games Played: 2&quot;        
+##  [5] &quot;Iowa State Cyclones_2018 Seed: 6 Tourn Games Played: 1&quot;       
+##  [6] &quot;Florida State Seminoles_2018 Seed: 4 Tourn Games Played: 3&quot;   
+##  [7] &quot;Florida Gators_2018 Seed: 10 Tourn Games Played: 2&quot;           
+##  [8] &quot;Texas Tech Red Raiders_2018 Seed: 3 Tourn Games Played: 6&quot;    
+##  [9] &quot;Syracuse Orange_2018 Seed: 8 Tourn Games Played: 1&quot;           
+## [10] &quot;Arizona State Sun Devils_2018 Seed: 11 Tourn Games Played: 2&quot; 
+## [11] &quot;Mississippi State Bulldogs_2018 Seed: 5 Tourn Games Played: 1&quot;
+## [12] &quot;Virginia Commonwealth Rams_2018 Seed: 8 Tourn Games Played: 1&quot;
+## [13] &quot;LSU Tigers_2018 Seed: 3 Tourn Games Played: 3&quot;                
+## [14] &quot;Purdue Boilermakers_2018 Seed: 3 Tourn Games Played: 4&quot;       
+## [15] &quot;Kansas State Wildcats_2018 Seed: 4 Tourn Games Played: 1&quot;     
+## [16] &quot;Iowa Hawkeyes_2018 Seed: 10 Tourn Games Played: 2&quot;            
+## [17] &quot;Villanova Wildcats_2018 Seed: 6 Tourn Games Played: 2&quot;        
+## [18] &quot;Oregon Ducks_2018 Seed: 12 Tourn Games Played: 3&quot;             
+## [1] &quot; &quot;
+## [1] &quot;Teams in Cluster  2&quot;
+##  [1] &quot;Houston Cougars_2018 Seed: 3 Tourn Games Played: 3&quot;               
+##  [2] &quot;Utah State Aggies_2018 Seed: 8 Tourn Games Played: 1&quot;             
+##  [3] &quot;Wofford Terriers_2018 Seed: 7 Tourn Games Played: 2&quot;              
+##  [4] &quot;Northeastern Huskies_2018 Seed: 13 Tourn Games Played: 1&quot;         
+##  [5] &quot;Abilene Christian Wildcats_2018 Seed: 15 Tourn Games Played: 1&quot;   
+##  [6] &quot;New Mexico State Aggies_2018 Seed: 12 Tourn Games Played: 1&quot;      
+##  [7] &quot;Kentucky Wildcats_2018 Seed: 2 Tourn Games Played: 4&quot;             
+##  [8] &quot;Vermont Catamounts_2018 Seed: 13 Tourn Games Played: 1&quot;           
+##  [9] &quot;Montana Grizzlies_2018 Seed: 15 Tourn Games Played: 1&quot;            
+## [10] &quot;UCF Knights_2018 Seed: 9 Tourn Games Played: 2&quot;                   
+## [11] &quot;North Carolina Central Eagles_2018 Seed: 16 Tourn Games Played: 1&quot;
+## [12] &quot;Virginia Tech Hokies_2018 Seed: 4 Tourn Games Played: 3&quot;          
+## [13] &quot;Liberty Flames_2018 Seed: 12 Tourn Games Played: 2&quot;               
+## [14] &quot;Colgate Raiders_2018 Seed: 15 Tourn Games Played: 1&quot;              
+## [15] &quot;Cincinnati Bearcats_2018 Seed: 7 Tourn Games Played: 1&quot;           
+## [16] &quot;Gardner-Webb Runnin&#39; Bulldogs_2018 Seed: 16 Tourn Games Played: 1&quot;
+## [17] &quot;Old Dominion Monarchs_2018 Seed: 14 Tourn Games Played: 1&quot;        
+## [18] &quot;UC Irvine Anteaters_2018 Seed: 13 Tourn Games Played: 2&quot;          
+## [1] &quot; &quot;
+## [1] &quot;Teams in Cluster  3&quot;
+## [1] &quot;Iona Gaels_2018 Seed: 16 Tourn Games Played: 1&quot;                 
+## [2] &quot;Georgia State Panthers_2018 Seed: 14 Tourn Games Played: 1&quot;     
+## [3] &quot;Prairie View A&amp;M Panthers_2018 Seed: 16 Tourn Games Played: 1&quot;  
+## [4] &quot;St. John&#39;s Red Storm_2018 Seed: 11 Tourn Games Played: 1&quot;       
+## [5] &quot;Fairleigh Dickinson Knights_2018 Seed: 16 Tourn Games Played: 2&quot;
+## [6] &quot;Temple Owls_2018 Seed: 11 Tourn Games Played: 1&quot;                
+## [7] &quot;Ole Miss Rebels_2018 Seed: 8 Tourn Games Played: 1&quot;             
+## [1] &quot; &quot;
+## [1] &quot;Teams in Cluster  4&quot;
+##  [1] &quot;Seton Hall Pirates_2018 Seed: 10 Tourn Games Played: 1&quot;      
+##  [2] &quot;Ohio State Buckeyes_2018 Seed: 11 Tourn Games Played: 2&quot;     
+##  [3] &quot;Michigan Wolverines_2018 Seed: 2 Tourn Games Played: 3&quot;      
+##  [4] &quot;Baylor Bears_2018 Seed: 9 Tourn Games Played: 2&quot;             
+##  [5] &quot;Marquette Golden Eagles_2018 Seed: 5 Tourn Games Played: 1&quot;  
+##  [6] &quot;Bradley Braves_2018 Seed: 15 Tourn Games Played: 1&quot;          
+##  [7] &quot;Saint Louis Billikens_2018 Seed: 13 Tourn Games Played: 1&quot;   
+##  [8] &quot;Maryland Terrapins_2018 Seed: 6 Tourn Games Played: 2&quot;       
+##  [9] &quot;Minnesota Golden Gophers_2018 Seed: 10 Tourn Games Played: 2&quot;
+## [10] &quot;Louisville Cardinals_2018 Seed: 7 Tourn Games Played: 1&quot;     
+## [11] &quot;North Dakota State Bison_2018 Seed: 16 Tourn Games Played: 2&quot;
+## [12] &quot;Wisconsin Badgers_2018 Seed: 5 Tourn Games Played: 1&quot;        
+## [13] &quot;Saint Mary&#39;s Gaels_2018 Seed: 11 Tourn Games Played: 1&quot;      
+## [14] &quot;Virginia Cavaliers_2018 Seed: 1 Tourn Games Played: 6&quot;       
+## [15] &quot;Oklahoma Sooners_2018 Seed: 9 Tourn Games Played: 2&quot;         
+## [1] &quot; &quot;
+## [1] &quot;Teams in Cluster  5&quot;
+##  [1] &quot;Buffalo Bulls_2018 Seed: 6 Tourn Games Played: 2&quot;           
+##  [2] &quot;Nevada Wolf Pack_2018 Seed: 7 Tourn Games Played: 1&quot;        
+##  [3] &quot;Gonzaga Bulldogs_2018 Seed: 1 Tourn Games Played: 4&quot;        
+##  [4] &quot;Murray State Racers_2018 Seed: 12 Tourn Games Played: 2&quot;    
+##  [5] &quot;Northern Kentucky Norse_2018 Seed: 14 Tourn Games Played: 1&quot;
+##  [6] &quot;Yale Bulldogs_2018 Seed: 14 Tourn Games Played: 1&quot;          
+##  [7] &quot;Duke Blue Devils_2018 Seed: 1 Tourn Games Played: 4&quot;        
+##  [8] &quot;Belmont Bruins_2018 Seed: 11 Tourn Games Played: 2&quot;         
+##  [9] &quot;Michigan State Spartans_2018 Seed: 2 Tourn Games Played: 5&quot; 
+## [10] &quot;Tennessee Volunteers_2018 Seed: 2 Tourn Games Played: 3&quot;    
+## [1] &quot; &quot;
+## [1] &quot;Creating Distance Matrix using manhattan&quot;
+## [1] &quot;Clustering using complete&quot;
+## [1] &quot;Clustering Complete. Access the Cluster object in first element of output&quot;
+## [1] &quot;Calculating RMSSTD&quot;
+## [1] &quot;RMSSTD Done. Access in Element 2&quot;
+## [1] &quot;Calculating RSQ&quot;
+## [1] &quot;RSQ Done. Access in Element 3&quot;
+## [1] &quot;Calculating SPRSQ&quot;
+## [1] &quot;SPRSQ Done. Access in Element 4&quot;
+## [1] &quot;Calculating Cluster Dist. &quot;
+## [1] &quot;CD Done. Access in Element 5&quot;</code></pre>
+<p><img src="cluster_analysis_files/figure-html/unnamed-chunk-3-2.png" width="672" /><img src="cluster_analysis_files/figure-html/unnamed-chunk-3-3.png" width="672" /><img src="cluster_analysis_files/figure-html/unnamed-chunk-3-4.png" width="672" /></p>
+</div>
+<div id="euclidean-distance-and-single-linkage" class="section level3">
+<h3>Euclidean Distance and Single Linkage</h3>
+<p>In this case, we see a very “stringy, chain-like” dendrogram that is very sensitive to outliers. Each successive grouping seems to add only one team or a small subtree, so the number of clusters is relatively arbitrary (as evidenced by the flat plots up to high cluster numbers). Adding additional clusters similarly adds the next most “unique” team, generally those of highest and lowest seeds (with anything up to <span class="math inline">\(5\)</span> clusters, the individual teams are <span class="math inline">\(1\)</span> and <span class="math inline">\(16\)</span> seeds, with the seed numbers growing upwards and downwards, respectively, after that). Since choosing <span class="math inline">\(8\)</span> clusters depicts the greatest outliers, such as tournament favorite Duke and biggest underdog North Carolina Central, and several very successful teams, such as Michigan State and Auburn, we will retain <span class="math inline">\(8\)</span> clusters.</p>
+<p>Now, while this method is useless in terms of creating larger groups with similar characteristics, it is actually incredibly useful for predicting tournament results. By picking out the outliers, it not only outlines pre-tournament favorites and “non-favorites” but also seems to predict outliers in terms of tournament success. Most notably, we see Auburn is among these <span class="math inline">\(1\)</span>-team groups, one of the Cinderella or surprise teams who went far in the tournament despite having a relatively high seed. Thus this technique may be very useful for picking out successful teams (ignoring the abnormally “bad” teams and admitting a bias towards pre-tournament favorites).</p>
+<p><img src="cluster_analysis_files/figure-html/unnamed-chunk-4-1.png" width="672" /></p>
+<pre><code>## [1] &quot;Teams in Cluster  1&quot;
+## [1] &quot;North Carolina Tar Heels_2018 Seed: 1 Tourn Games Played: 3&quot;
+## [1] &quot; &quot;
+## [1] &quot;Teams in Cluster  2&quot;
+##  [1] &quot;Houston Cougars_2018 Seed: 3 Tourn Games Played: 3&quot;               
+##  [2] &quot;Iona Gaels_2018 Seed: 16 Tourn Games Played: 1&quot;                   
+##  [3] &quot;Utah State Aggies_2018 Seed: 8 Tourn Games Played: 1&quot;             
+##  [4] &quot;Seton Hall Pirates_2018 Seed: 10 Tourn Games Played: 1&quot;           
+##  [5] &quot;Georgia State Panthers_2018 Seed: 14 Tourn Games Played: 1&quot;       
+##  [6] &quot;Wofford Terriers_2018 Seed: 7 Tourn Games Played: 2&quot;              
+##  [7] &quot;Northeastern Huskies_2018 Seed: 13 Tourn Games Played: 1&quot;         
+##  [8] &quot;Kansas Jayhawks_2018 Seed: 4 Tourn Games Played: 2&quot;               
+##  [9] &quot;Washington Huskies_2018 Seed: 9 Tourn Games Played: 2&quot;            
+## [10] &quot;Abilene Christian Wildcats_2018 Seed: 15 Tourn Games Played: 1&quot;   
+## [11] &quot;New Mexico State Aggies_2018 Seed: 12 Tourn Games Played: 1&quot;      
+## [12] &quot;Iowa State Cyclones_2018 Seed: 6 Tourn Games Played: 1&quot;           
+## [13] &quot;Ohio State Buckeyes_2018 Seed: 11 Tourn Games Played: 2&quot;          
+## [14] &quot;Kentucky Wildcats_2018 Seed: 2 Tourn Games Played: 4&quot;             
+## [15] &quot;Buffalo Bulls_2018 Seed: 6 Tourn Games Played: 2&quot;                 
+## [16] &quot;Michigan Wolverines_2018 Seed: 2 Tourn Games Played: 3&quot;           
+## [17] &quot;Baylor Bears_2018 Seed: 9 Tourn Games Played: 2&quot;                  
+## [18] &quot;Vermont Catamounts_2018 Seed: 13 Tourn Games Played: 1&quot;           
+## [19] &quot;Florida State Seminoles_2018 Seed: 4 Tourn Games Played: 3&quot;       
+## [20] &quot;Florida Gators_2018 Seed: 10 Tourn Games Played: 2&quot;               
+## [21] &quot;St. John&#39;s Red Storm_2018 Seed: 11 Tourn Games Played: 1&quot;         
+## [22] &quot;Montana Grizzlies_2018 Seed: 15 Tourn Games Played: 1&quot;            
+## [23] &quot;Marquette Golden Eagles_2018 Seed: 5 Tourn Games Played: 1&quot;       
+## [24] &quot;Nevada Wolf Pack_2018 Seed: 7 Tourn Games Played: 1&quot;              
+## [25] &quot;Fairleigh Dickinson Knights_2018 Seed: 16 Tourn Games Played: 2&quot;  
+## [26] &quot;Murray State Racers_2018 Seed: 12 Tourn Games Played: 2&quot;          
+## [27] &quot;Texas Tech Red Raiders_2018 Seed: 3 Tourn Games Played: 6&quot;        
+## [28] &quot;Syracuse Orange_2018 Seed: 8 Tourn Games Played: 1&quot;               
+## [29] &quot;Arizona State Sun Devils_2018 Seed: 11 Tourn Games Played: 2&quot;     
+## [30] &quot;Northern Kentucky Norse_2018 Seed: 14 Tourn Games Played: 1&quot;      
+## [31] &quot;Bradley Braves_2018 Seed: 15 Tourn Games Played: 1&quot;               
+## [32] &quot;Saint Louis Billikens_2018 Seed: 13 Tourn Games Played: 1&quot;        
+## [33] &quot;Maryland Terrapins_2018 Seed: 6 Tourn Games Played: 2&quot;            
+## [34] &quot;UCF Knights_2018 Seed: 9 Tourn Games Played: 2&quot;                   
+## [35] &quot;Yale Bulldogs_2018 Seed: 14 Tourn Games Played: 1&quot;                
+## [36] &quot;Minnesota Golden Gophers_2018 Seed: 10 Tourn Games Played: 2&quot;     
+## [37] &quot;Louisville Cardinals_2018 Seed: 7 Tourn Games Played: 1&quot;          
+## [38] &quot;Virginia Tech Hokies_2018 Seed: 4 Tourn Games Played: 3&quot;          
+## [39] &quot;Belmont Bruins_2018 Seed: 11 Tourn Games Played: 2&quot;               
+## [40] &quot;North Dakota State Bison_2018 Seed: 16 Tourn Games Played: 2&quot;     
+## [41] &quot;Mississippi State Bulldogs_2018 Seed: 5 Tourn Games Played: 1&quot;    
+## [42] &quot;Temple Owls_2018 Seed: 11 Tourn Games Played: 1&quot;                  
+## [43] &quot;Liberty Flames_2018 Seed: 12 Tourn Games Played: 2&quot;               
+## [44] &quot;Virginia Commonwealth Rams_2018 Seed: 8 Tourn Games Played: 1&quot;    
+## [45] &quot;LSU Tigers_2018 Seed: 3 Tourn Games Played: 3&quot;                    
+## [46] &quot;Purdue Boilermakers_2018 Seed: 3 Tourn Games Played: 4&quot;           
+## [47] &quot;Colgate Raiders_2018 Seed: 15 Tourn Games Played: 1&quot;              
+## [48] &quot;Wisconsin Badgers_2018 Seed: 5 Tourn Games Played: 1&quot;             
+## [49] &quot;Saint Mary&#39;s Gaels_2018 Seed: 11 Tourn Games Played: 1&quot;           
+## [50] &quot;Kansas State Wildcats_2018 Seed: 4 Tourn Games Played: 1&quot;         
+## [51] &quot;Virginia Cavaliers_2018 Seed: 1 Tourn Games Played: 6&quot;            
+## [52] &quot;Tennessee Volunteers_2018 Seed: 2 Tourn Games Played: 3&quot;          
+## [53] &quot;Cincinnati Bearcats_2018 Seed: 7 Tourn Games Played: 1&quot;           
+## [54] &quot;Iowa Hawkeyes_2018 Seed: 10 Tourn Games Played: 2&quot;                
+## [55] &quot;Ole Miss Rebels_2018 Seed: 8 Tourn Games Played: 1&quot;               
+## [56] &quot;Gardner-Webb Runnin&#39; Bulldogs_2018 Seed: 16 Tourn Games Played: 1&quot;
+## [57] &quot;Villanova Wildcats_2018 Seed: 6 Tourn Games Played: 2&quot;            
+## [58] &quot;Old Dominion Monarchs_2018 Seed: 14 Tourn Games Played: 1&quot;        
+## [59] &quot;Oregon Ducks_2018 Seed: 12 Tourn Games Played: 3&quot;                 
+## [60] &quot;Oklahoma Sooners_2018 Seed: 9 Tourn Games Played: 2&quot;              
+## [61] &quot;UC Irvine Anteaters_2018 Seed: 13 Tourn Games Played: 2&quot;          
+## [1] &quot; &quot;
+## [1] &quot;Teams in Cluster  3&quot;
+## [1] &quot;Auburn Tigers_2018 Seed: 5 Tourn Games Played: 5&quot;
+## [1] &quot; &quot;
+## [1] &quot;Teams in Cluster  4&quot;
+## [1] &quot;Prairie View A&amp;M Panthers_2018 Seed: 16 Tourn Games Played: 1&quot;
+## [1] &quot; &quot;
+## [1] &quot;Teams in Cluster  5&quot;
+## [1] &quot;Gonzaga Bulldogs_2018 Seed: 1 Tourn Games Played: 4&quot;
+## [1] &quot; &quot;
+## [1] &quot;Teams in Cluster  6&quot;
+## [1] &quot;Duke Blue Devils_2018 Seed: 1 Tourn Games Played: 4&quot;
+## [1] &quot; &quot;
+## [1] &quot;Teams in Cluster  7&quot;
+## [1] &quot;North Carolina Central Eagles_2018 Seed: 16 Tourn Games Played: 1&quot;
+## [1] &quot; &quot;
+## [1] &quot;Teams in Cluster  8&quot;
+## [1] &quot;Michigan State Spartans_2018 Seed: 2 Tourn Games Played: 5&quot;
+## [1] &quot; &quot;
+## [1] &quot;Creating Distance Matrix using euclidean&quot;
+## [1] &quot;Clustering using single&quot;
+## [1] &quot;Clustering Complete. Access the Cluster object in first element of output&quot;
+## [1] &quot;Calculating RMSSTD&quot;
+## [1] &quot;RMSSTD Done. Access in Element 2&quot;
+## [1] &quot;Calculating RSQ&quot;
+## [1] &quot;RSQ Done. Access in Element 3&quot;
+## [1] &quot;Calculating SPRSQ&quot;
+## [1] &quot;SPRSQ Done. Access in Element 4&quot;
+## [1] &quot;Calculating Cluster Dist. &quot;
+## [1] &quot;CD Done. Access in Element 5&quot;</code></pre>
+<p><img src="cluster_analysis_files/figure-html/unnamed-chunk-4-2.png" width="672" /><img src="cluster_analysis_files/figure-html/unnamed-chunk-4-3.png" width="672" /><img src="cluster_analysis_files/figure-html/unnamed-chunk-4-4.png" width="672" /></p>
+</div>
+</div>
+<div id="k-means-cluster-analysis" class="section level2">
+<h2>K-Means Cluster Analysis</h2>
+<p>While the hierarchial cluster analysis above was incredibly useful, it would also be very informative to look at a much greater pool of teams from multiple years. This is technically possible using the techniques above, but here we will do it in a much easier and quicker way using k-means cluster analysis.</p>
+<p>Below, using a modified version of the script by <a href="https://github.com/mpeeples2008/Kmeans">Matt Peeples</a>, we complete k-means cluster analysis on all the tournament teams with complete data from the 2014-15 to 2018-19 seasons. Looking at the two plots provided by this script, we see that the sum of squares vs. number of clusters flattens out at about <span class="math inline">\(3\)</span> (for log scale) or <span class="math inline">\(4\)</span> (for normal scale) clusters. Since the <span class="math inline">\(4\)</span> cluster solution is more interesting to interpret and still shows significant distinction on the principal component and discriminating function plots, we choose to retain <span class="math inline">\(4\)</span> clusters.</p>
+<p>In this case, we see that Cluster 1 contains mostly middle seeds with mediocre tournament performance, with the exception of some “Cinderella” Final Four teams like 7 seed Michigan State in 2014-15, 10 seed Syracuse in 2015-16, and 7 seed South Carolina in 2016-17. Looking at the cluster means, we see that Cluster 1 has significantly lower adjusted averages for most offensive statistics (points, true shooting percentage, efficiency, etc.). However, their defensive statistics (opponent points, true shooting percentage, efficiency, etc.) are relatively average, with means of about <span class="math inline">\(0\)</span>. Interestingly, while their adjusted winning percentage is expectedly low, their opponent winning percentage and strength of schedule are high, along with slightly above average RPI values. This implies that these teams are quality defensive teams with mediocre offenses who come from strong conferences. While their tournament performances are not stellar, membership in this group does imply the possibility of being a “Cinderella” team.</p>
+<p>Cluster 2 teams generally seem to have lower seeds and better tournament performance, but there are still teams of all sorts. However, we see one champion in 2018-19 Virginia and three runner-ups in 2018-19 Texas Tech, 2017-18 Michigan, and 2014-15 Wisconsin, implying the possibility of strong performance. Despite this success, this cluster seems to have low offensive statistics, with the lowest points and efficiency. However, they have by far the strongest defensive statistics, with adjusted opponent points and efficiency means around <span class="math inline">\(-1\)</span>. Finally, their composite statistics (adjusted winning percentage, opponent winning percentage, strength of schedule, RPI) are slightly below average, probably due to the large range of teams. Overall, the hallmark of this group is strong defense, which seemingly can allow for both outstanding and mediocre tournament performances.</p>
+<p>Then, Cluster 3 is by far the lowest performing with the highest seeds, containing few exceptions. Fittingly, this is also the largest group, including many teams eliminated in the first two rounds. This cluster has generally mediocre offensive statistics along with poor defensive statistics. Furthermore, all of their composite statistics are significantly below average, implying both low performance and lowly competition. The only major exception comes from the 2018-19 Auburn team, which reached the Final Four, but this team is a known outlier from our previous clusters and thus does not seem to imply any silver lining for this low-performing group.</p>
+<p>On the other hand, Cluster 4 is the highest performing and lowest-seed cluster, including the fewest early eliminations, two champions in 2015-16 and 2017-18 Villanova, and two runner-ups in 2015-16 North Carolina and 2016-17 Gonzaga. Likewise, these teams are the most well-rounded statistically, having very high offensive performance and generally strong defense as well. Notably, their composite statistics are also generally the highest, implying strong performance against good (if not always great) competition. If we were to pick a decisive “winner” group, this would be it.</p>
+<p>Interestingly, these groups are all similarly-sized, perhaps reflecting some of the classic “randomness” of the tournament. But the existence of such clear and interpretable groups imply that there are significant patterns, even across multiple years (albeit with some expected “noise” in each cluster).</p>
+<p><img src="cluster_analysis_files/figure-html/k-means-1.png" width="672" /><img src="cluster_analysis_files/figure-html/k-means-2.png" width="672" /><img src="cluster_analysis_files/figure-html/k-means-3.png" width="672" /><img src="cluster_analysis_files/figure-html/k-means-4.png" width="672" /></p>
+<pre><code>## Cluster Means</code></pre>
+<table>
+<caption>Table continues below</caption>
+<colgroup>
+<col width="13%" />
+<col width="13%" />
+<col width="14%" />
+<col width="13%" />
+<col width="14%" />
+<col width="13%" />
+<col width="16%" />
+</colgroup>
+<thead>
+<tr class="header">
+<th align="left">Group.1</th>
+<th align="left">points</th>
+<th align="left">rebounds</th>
+<th align="left">assists</th>
+<th align="left">steals</th>
+<th align="left">blocks</th>
+<th align="left">turnovers</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td align="left">1</td>
+<td align="left">-0.5032</td>
+<td align="left">0.2012</td>
+<td align="left">-0.4455</td>
+<td align="left">-0.2928</td>
+<td align="left">0.5748</td>
+<td align="left">0.1457</td>
+</tr>
+<tr class="even">
+<td align="left">2</td>
+<td align="left">-0.9847</td>
+<td align="left">-0.6809</td>
+<td align="left">-0.6242</td>
+<td align="left">-0.2778</td>
+<td align="left">-0.3852</td>
+<td align="left">-0.6683</td>
+</tr>
+<tr class="odd">
+<td align="left">3</td>
+<td align="left">0.333</td>
+<td align="left">-0.3571</td>
+<td align="left">0.01092</td>
+<td align="left">0.5068</td>
+<td align="left">-0.4066</td>
+<td align="left">0.4395</td>
+</tr>
+<tr class="even">
+<td align="left">4</td>
+<td align="left">0.9111</td>
+<td align="left">0.8081</td>
+<td align="left">0.9472</td>
+<td align="left">-0.09954</td>
+<td align="left">0.2534</td>
+<td align="left">-0.1228</td>
+</tr>
+</tbody>
+</table>
+<table>
+<caption>Table continues below</caption>
+<colgroup>
+<col width="23%" />
+<col width="27%" />
+<col width="24%" />
+<col width="24%" />
+</colgroup>
+<thead>
+<tr class="header">
+<th align="left">personal_fouls</th>
+<th align="left">true_shooting_pct</th>
+<th align="left">points_in_paint</th>
+<th align="left">fast_break_pts</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td align="left">0.03828</td>
+<td align="left">-0.6133</td>
+<td align="left">-0.3789</td>
+<td align="left">-0.03697</td>
+</tr>
+<tr class="even">
+<td align="left">-0.7452</td>
+<td align="left">-0.1463</td>
+<td align="left">-0.7457</td>
+<td align="left">-0.696</td>
+</tr>
+<tr class="odd">
+<td align="left">0.6358</td>
+<td align="left">-0.02872</td>
+<td align="left">0.1783</td>
+<td align="left">0.1865</td>
+</tr>
+<tr class="even">
+<td align="left">-0.193</td>
+<td align="left">0.7616</td>
+<td align="left">0.7783</td>
+<td align="left">0.3899</td>
+</tr>
+</tbody>
+</table>
+<table>
+<caption>Table continues below</caption>
+<colgroup>
+<col width="29%" />
+<col width="16%" />
+<col width="16%" />
+<col width="18%" />
+<col width="18%" />
+</colgroup>
+<thead>
+<tr class="header">
+<th align="left">points_off_turnovers</th>
+<th align="left">efficiency</th>
+<th align="left">opp_points</th>
+<th align="left">opp_rebounds</th>
+<th align="left">opp_assists</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td align="left">-0.5477</td>
+<td align="left">-0.456</td>
+<td align="left">-0.08196</td>
+<td align="left">0.2317</td>
+<td align="left">0.1291</td>
+</tr>
+<tr class="even">
+<td align="left">-0.2578</td>
+<td align="left">-0.7312</td>
+<td align="left">-1.097</td>
+<td align="left">-0.7799</td>
+<td align="left">-0.78</td>
+</tr>
+<tr class="odd">
+<td align="left">0.4896</td>
+<td align="left">-0.08409</td>
+<td align="left">0.7785</td>
+<td align="left">0.6343</td>
+<td align="left">0.5605</td>
+</tr>
+<tr class="even">
+<td align="left">0.1558</td>
+<td align="left">1.163</td>
+<td align="left">0.04481</td>
+<td align="left">-0.3527</td>
+<td align="left">-0.1612</td>
+</tr>
+</tbody>
+</table>
+<table>
+<caption>Table continues below</caption>
+<colgroup>
+<col width="20%" />
+<col width="26%" />
+<col width="30%" />
+<col width="21%" />
+</colgroup>
+<thead>
+<tr class="header">
+<th align="left">opp_turnovers</th>
+<th align="left">opp_personal_fouls</th>
+<th align="left">opp_true_shooting_pct</th>
+<th align="left">opp_efficiency</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td align="left">-0.3732</td>
+<td align="left">0.1042</td>
+<td align="left">-0.3611</td>
+<td align="left">0.05695</td>
+</tr>
+<tr class="even">
+<td align="left">-0.3842</td>
+<td align="left">-0.7148</td>
+<td align="left">-0.3679</td>
+<td align="left">-0.8779</td>
+</tr>
+<tr class="odd">
+<td align="left">0.6758</td>
+<td align="left">0.2512</td>
+<td align="left">0.8878</td>
+<td align="left">0.7776</td>
+</tr>
+<tr class="even">
+<td align="left">-0.1383</td>
+<td align="left">0.1874</td>
+<td align="left">-0.4234</td>
+<td align="left">-0.274</td>
+</tr>
+</tbody>
+</table>
+<table style="width:57%;">
+<colgroup>
+<col width="13%" />
+<col width="13%" />
+<col width="13%" />
+<col width="15%" />
+</colgroup>
+<thead>
+<tr class="header">
+<th align="left">awp</th>
+<th align="left">owp</th>
+<th align="left">sos</th>
+<th align="left">rpi</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td align="left">-0.6015</td>
+<td align="left">0.7289</td>
+<td align="left">0.7363</td>
+<td align="left">0.1977</td>
+</tr>
+<tr class="even">
+<td align="left">0.2631</td>
+<td align="left">-0.2583</td>
+<td align="left">-0.2635</td>
+<td align="left">-0.04167</td>
+</tr>
+<tr class="odd">
+<td align="left">-0.4575</td>
+<td align="left">-0.6594</td>
+<td align="left">-0.6497</td>
+<td align="left">-0.7778</td>
+</tr>
+<tr class="even">
+<td align="left">0.9325</td>
+<td align="left">0.3048</td>
+<td align="left">0.2901</td>
+<td align="left">0.7921</td>
+</tr>
+</tbody>
+</table>
+<pre><code>## [1] &quot;Teams in Cluster  1&quot;
+##  [1] &quot;Kansas Jayhawks_2018 Seed: 4 Tourn Games Played: 2&quot;           
+##  [2] &quot;Washington Huskies_2018 Seed: 9 Tourn Games Played: 2&quot;        
+##  [3] &quot;Iowa State Cyclones_2018 Seed: 6 Tourn Games Played: 1&quot;       
+##  [4] &quot;Ohio State Buckeyes_2018 Seed: 11 Tourn Games Played: 2&quot;      
+##  [5] &quot;Baylor Bears_2018 Seed: 9 Tourn Games Played: 2&quot;              
+##  [6] &quot;Florida State Seminoles_2018 Seed: 4 Tourn Games Played: 3&quot;   
+##  [7] &quot;Marquette Golden Eagles_2018 Seed: 5 Tourn Games Played: 1&quot;   
+##  [8] &quot;Syracuse Orange_2018 Seed: 8 Tourn Games Played: 1&quot;           
+##  [9] &quot;Saint Louis Billikens_2018 Seed: 13 Tourn Games Played: 1&quot;    
+## [10] &quot;Maryland Terrapins_2018 Seed: 6 Tourn Games Played: 2&quot;        
+## [11] &quot;UCF Knights_2018 Seed: 9 Tourn Games Played: 2&quot;               
+## [12] &quot;Minnesota Golden Gophers_2018 Seed: 10 Tourn Games Played: 2&quot; 
+## [13] &quot;Louisville Cardinals_2018 Seed: 7 Tourn Games Played: 1&quot;      
+## [14] &quot;Mississippi State Bulldogs_2018 Seed: 5 Tourn Games Played: 1&quot;
+## [15] &quot;Virginia Commonwealth Rams_2018 Seed: 8 Tourn Games Played: 1&quot;
+## [16] &quot;Purdue Boilermakers_2018 Seed: 3 Tourn Games Played: 4&quot;       
+## [17] &quot;Villanova Wildcats_2018 Seed: 6 Tourn Games Played: 2&quot;        
+## [18] &quot;Oklahoma Sooners_2018 Seed: 9 Tourn Games Played: 2&quot;          
+## [19] &quot;Syracuse Orange_2017 Seed: 11 Tourn Games Played: 4&quot;          
+## [20] &quot;Clemson Tigers_2017 Seed: 5 Tourn Games Played: 3&quot;            
+## [21] &quot;Texas Longhorns_2017 Seed: 10 Tourn Games Played: 1&quot;          
+## [22] &quot;Tennessee Volunteers_2017 Seed: 3 Tourn Games Played: 2&quot;      
+## [23] &quot;Kentucky Wildcats_2017 Seed: 5 Tourn Games Played: 3&quot;         
+## [24] &quot;Miami (FL) Hurricanes_2017 Seed: 6 Tourn Games Played: 1&quot;     
+## [25] &quot;Missouri Tigers_2017 Seed: 8 Tourn Games Played: 1&quot;           
+## [26] &quot;Texas A&amp;M Aggies_2017 Seed: 7 Tourn Games Played: 3&quot;          
+## [27] &quot;UCLA Bruins_2017 Seed: 11 Tourn Games Played: 1&quot;              
+## [28] &quot;Alabama Crimson Tide_2017 Seed: 9 Tourn Games Played: 2&quot;      
+## [29] &quot;Texas Tech Red Raiders_2017 Seed: 3 Tourn Games Played: 4&quot;    
+## [30] &quot;Florida Gators_2017 Seed: 6 Tourn Games Played: 2&quot;            
+## [31] &quot;Providence Friars_2016 Seed: 11 Tourn Games Played: 1&quot;        
+## [32] &quot;Baylor Bears_2016 Seed: 3 Tourn Games Played: 3&quot;              
+## [33] &quot;Florida Gators_2016 Seed: 4 Tourn Games Played: 4&quot;            
+## [34] &quot;South Carolina Gamecocks_2016 Seed: 7 Tourn Games Played: 5&quot;  
+## [35] &quot;Michigan State Spartans_2016 Seed: 9 Tourn Games Played: 2&quot;   
+## [36] &quot;Rhode Island Rams_2016 Seed: 11 Tourn Games Played: 2&quot;        
+## [37] &quot;Vanderbilt Commodores_2016 Seed: 9 Tourn Games Played: 1&quot;     
+## [38] &quot;Xavier Musketeers_2016 Seed: 11 Tourn Games Played: 4&quot;        
+## [39] &quot;Northwestern Wildcats_2016 Seed: 8 Tourn Games Played: 2&quot;     
+## [40] &quot;Minnesota Golden Gophers_2016 Seed: 5 Tourn Games Played: 1&quot;  
+## [41] &quot;Seton Hall Pirates_2016 Seed: 9 Tourn Games Played: 1&quot;        
+## [42] &quot;Duke Blue Devils_2015 Seed: 4 Tourn Games Played: 3&quot;          
+## [43] &quot;Saint Joseph&#39;s (PA) Hawks_2015 Seed: 8 Tourn Games Played: 2&quot; 
+## [44] &quot;Syracuse Orange_2015 Seed: 10 Tourn Games Played: 5&quot;          
+## [45] &quot;Colorado Buffaloes_2015 Seed: 8 Tourn Games Played: 1&quot;        
+## [46] &quot;Vanderbilt Commodores_2015 Seed: 11 Tourn Games Played: 1&quot;    
+## [47] &quot;Iowa Hawkeyes_2015 Seed: 7 Tourn Games Played: 2&quot;             
+## [48] &quot;Connecticut Huskies_2015 Seed: 9 Tourn Games Played: 2&quot;       
+## [49] &quot;California Golden Bears_2015 Seed: 4 Tourn Games Played: 1&quot;   
+## [50] &quot;USC Trojans_2015 Seed: 8 Tourn Games Played: 1&quot;               
+## [51] &quot;Notre Dame Fighting Irish_2015 Seed: 6 Tourn Games Played: 4&quot; 
+## [52] &quot;Purdue Boilermakers_2014 Seed: 9 Tourn Games Played: 1&quot;       
+## [53] &quot;Texas Longhorns_2014 Seed: 11 Tourn Games Played: 1&quot;          
+## [54] &quot;Kansas Jayhawks_2014 Seed: 2 Tourn Games Played: 2&quot;           
+## [55] &quot;Buffalo Bulls_2014 Seed: 12 Tourn Games Played: 1&quot;            
+## [56] &quot;St. John&#39;s Red Storm_2014 Seed: 9 Tourn Games Played: 1&quot;      
+## [57] &quot;UAB Blazers_2014 Seed: 14 Tourn Games Played: 2&quot;              
+## [58] &quot;Georgetown Hoyas_2014 Seed: 4 Tourn Games Played: 2&quot;          
+## [59] &quot;UCLA Bruins_2014 Seed: 11 Tourn Games Played: 3&quot;              
+## [60] &quot;Oregon Ducks_2014 Seed: 8 Tourn Games Played: 2&quot;              
+## [61] &quot;Baylor Bears_2014 Seed: 3 Tourn Games Played: 1&quot;              
+## [62] &quot;Georgia Bulldogs_2014 Seed: 10 Tourn Games Played: 1&quot;         
+## [63] &quot;Louisville Cardinals_2014 Seed: 4 Tourn Games Played: 4&quot;      
+## [64] &quot;Oklahoma Sooners_2014 Seed: 3 Tourn Games Played: 3&quot;          
+## [65] &quot;Providence Friars_2014 Seed: 6 Tourn Games Played: 1&quot;         
+## [66] &quot;Michigan State Spartans_2014 Seed: 7 Tourn Games Played: 5&quot;   
+## [1] &quot; &quot;
+## [1] &quot;Teams in Cluster  2&quot;
+##  [1] &quot;Northeastern Huskies_2018 Seed: 13 Tourn Games Played: 1&quot;         
+##  [2] &quot;Michigan Wolverines_2018 Seed: 2 Tourn Games Played: 3&quot;           
+##  [3] &quot;Vermont Catamounts_2018 Seed: 13 Tourn Games Played: 1&quot;           
+##  [4] &quot;Florida Gators_2018 Seed: 10 Tourn Games Played: 2&quot;               
+##  [5] &quot;Texas Tech Red Raiders_2018 Seed: 3 Tourn Games Played: 6&quot;        
+##  [6] &quot;Bradley Braves_2018 Seed: 15 Tourn Games Played: 1&quot;               
+##  [7] &quot;Virginia Tech Hokies_2018 Seed: 4 Tourn Games Played: 3&quot;          
+##  [8] &quot;North Dakota State Bison_2018 Seed: 16 Tourn Games Played: 2&quot;     
+##  [9] &quot;Liberty Flames_2018 Seed: 12 Tourn Games Played: 2&quot;               
+## [10] &quot;Wisconsin Badgers_2018 Seed: 5 Tourn Games Played: 1&quot;             
+## [11] &quot;Saint Mary&#39;s Gaels_2018 Seed: 11 Tourn Games Played: 1&quot;           
+## [12] &quot;Kansas State Wildcats_2018 Seed: 4 Tourn Games Played: 1&quot;         
+## [13] &quot;Virginia Cavaliers_2018 Seed: 1 Tourn Games Played: 6&quot;            
+## [14] &quot;Cincinnati Bearcats_2018 Seed: 7 Tourn Games Played: 1&quot;           
+## [15] &quot;Old Dominion Monarchs_2018 Seed: 14 Tourn Games Played: 1&quot;        
+## [16] &quot;Oregon Ducks_2018 Seed: 12 Tourn Games Played: 3&quot;                 
+## [17] &quot;UC Irvine Anteaters_2018 Seed: 13 Tourn Games Played: 2&quot;          
+## [18] &quot;Charleston Cougars_2017 Seed: 13 Tourn Games Played: 1&quot;           
+## [19] &quot;Virginia Cavaliers_2017 Seed: 1 Tourn Games Played: 1&quot;            
+## [20] &quot;Wright State Raiders_2017 Seed: 14 Tourn Games Played: 1&quot;         
+## [21] &quot;Davidson Wildcats_2017 Seed: 12 Tourn Games Played: 1&quot;            
+## [22] &quot;Loyola (IL) Ramblers_2017 Seed: 11 Tourn Games Played: 5&quot;         
+## [23] &quot;Houston Cougars_2017 Seed: 6 Tourn Games Played: 2&quot;               
+## [24] &quot;UNC Greensboro Spartans_2017 Seed: 13 Tourn Games Played: 1&quot;      
+## [25] &quot;Michigan Wolverines_2017 Seed: 3 Tourn Games Played: 6&quot;           
+## [26] &quot;Radford Highlanders_2017 Seed: 16 Tourn Games Played: 2&quot;          
+## [27] &quot;SMU Mustangs_2016 Seed: 6 Tourn Games Played: 1&quot;                  
+## [28] &quot;Wisconsin Badgers_2016 Seed: 8 Tourn Games Played: 3&quot;             
+## [29] &quot;Miami (FL) Hurricanes_2016 Seed: 8 Tourn Games Played: 1&quot;         
+## [30] &quot;North Carolina Central Eagles_2016 Seed: 16 Tourn Games Played: 1&quot;
+## [31] &quot;Vermont Catamounts_2016 Seed: 13 Tourn Games Played: 1&quot;           
+## [32] &quot;Michigan Wolverines_2016 Seed: 7 Tourn Games Played: 3&quot;           
+## [33] &quot;Jacksonville State Gamecocks_2016 Seed: 15 Tourn Games Played: 1&quot; 
+## [34] &quot;Cincinnati Bearcats_2016 Seed: 6 Tourn Games Played: 2&quot;           
+## [35] &quot;Middle Tennessee Blue Raiders_2016 Seed: 12 Tourn Games Played: 2&quot;
+## [36] &quot;Virginia Cavaliers_2015 Seed: 1 Tourn Games Played: 4&quot;            
+## [37] &quot;Wichita State Shockers_2015 Seed: 11 Tourn Games Played: 3&quot;       
+## [38] &quot;Wisconsin Badgers_2015 Seed: 7 Tourn Games Played: 3&quot;             
+## [39] &quot;Valparaiso Crusaders_2014 Seed: 13 Tourn Games Played: 1&quot;         
+## [40] &quot;Wichita State Shockers_2014 Seed: 7 Tourn Games Played: 3&quot;        
+## [41] &quot;Cincinnati Bearcats_2014 Seed: 8 Tourn Games Played: 2&quot;           
+## [42] &quot;Butler Bulldogs_2014 Seed: 6 Tourn Games Played: 2&quot;               
+## [43] &quot;Maryland Terrapins_2014 Seed: 4 Tourn Games Played: 2&quot;            
+## [44] &quot;Northeastern Huskies_2014 Seed: 14 Tourn Games Played: 1&quot;         
+## [45] &quot;North Florida Ospreys_2014 Seed: 16 Tourn Games Played: 1&quot;        
+## [46] &quot;SMU Mustangs_2014 Seed: 6 Tourn Games Played: 1&quot;                  
+## [47] &quot;Utah Utes_2014 Seed: 5 Tourn Games Played: 3&quot;                     
+## [48] &quot;Coastal Carolina Chanticleers_2014 Seed: 16 Tourn Games Played: 1&quot;
+## [49] &quot;Harvard Crimson_2014 Seed: 13 Tourn Games Played: 1&quot;              
+## [50] &quot;Georgia State Panthers_2014 Seed: 14 Tourn Games Played: 2&quot;       
+## [51] &quot;Oklahoma State Cowboys_2014 Seed: 9 Tourn Games Played: 1&quot;        
+## [52] &quot;Wisconsin Badgers_2014 Seed: 1 Tourn Games Played: 6&quot;             
+## [53] &quot;Dayton Flyers_2014 Seed: 11 Tourn Games Played: 3&quot;                
+## [54] &quot;Albany Great Danes_2014 Seed: 14 Tourn Games Played: 1&quot;           
+## [55] &quot;Wyoming Cowboys_2014 Seed: 12 Tourn Games Played: 1&quot;              
+## [56] &quot;UC Irvine Anteaters_2014 Seed: 13 Tourn Games Played: 1&quot;          
+## [1] &quot; &quot;
+## [1] &quot;Teams in Cluster  3&quot;
+##  [1] &quot;Iona Gaels_2018 Seed: 16 Tourn Games Played: 1&quot;                        
+##  [2] &quot;Seton Hall Pirates_2018 Seed: 10 Tourn Games Played: 1&quot;                
+##  [3] &quot;Georgia State Panthers_2018 Seed: 14 Tourn Games Played: 1&quot;            
+##  [4] &quot;Auburn Tigers_2018 Seed: 5 Tourn Games Played: 5&quot;                      
+##  [5] &quot;Abilene Christian Wildcats_2018 Seed: 15 Tourn Games Played: 1&quot;        
+##  [6] &quot;Prairie View A&amp;M Panthers_2018 Seed: 16 Tourn Games Played: 1&quot;         
+##  [7] &quot;St. John&#39;s Red Storm_2018 Seed: 11 Tourn Games Played: 1&quot;              
+##  [8] &quot;Montana Grizzlies_2018 Seed: 15 Tourn Games Played: 1&quot;                 
+##  [9] &quot;Fairleigh Dickinson Knights_2018 Seed: 16 Tourn Games Played: 2&quot;       
+## [10] &quot;Arizona State Sun Devils_2018 Seed: 11 Tourn Games Played: 2&quot;          
+## [11] &quot;Northern Kentucky Norse_2018 Seed: 14 Tourn Games Played: 1&quot;           
+## [12] &quot;North Carolina Central Eagles_2018 Seed: 16 Tourn Games Played: 1&quot;     
+## [13] &quot;Temple Owls_2018 Seed: 11 Tourn Games Played: 1&quot;                       
+## [14] &quot;Colgate Raiders_2018 Seed: 15 Tourn Games Played: 1&quot;                   
+## [15] &quot;Iowa Hawkeyes_2018 Seed: 10 Tourn Games Played: 2&quot;                     
+## [16] &quot;Ole Miss Rebels_2018 Seed: 8 Tourn Games Played: 1&quot;                    
+## [17] &quot;Gardner-Webb Runnin&#39; Bulldogs_2018 Seed: 16 Tourn Games Played: 1&quot;     
+## [18] &quot;Oklahoma Sooners_2017 Seed: 10 Tourn Games Played: 1&quot;                  
+## [19] &quot;Arizona State Sun Devils_2017 Seed: 11 Tourn Games Played: 1&quot;          
+## [20] &quot;Bucknell Bison_2017 Seed: 14 Tourn Games Played: 1&quot;                    
+## [21] &quot;North Carolina State Wolfpack_2017 Seed: 9 Tourn Games Played: 1&quot;      
+## [22] &quot;Auburn Tigers_2017 Seed: 4 Tourn Games Played: 2&quot;                      
+## [23] &quot;Iona Gaels_2017 Seed: 15 Tourn Games Played: 1&quot;                        
+## [24] &quot;Seton Hall Pirates_2017 Seed: 8 Tourn Games Played: 2&quot;                 
+## [25] &quot;Pennsylvania Quakers_2017 Seed: 16 Tourn Games Played: 1&quot;              
+## [26] &quot;Rhode Island Rams_2017 Seed: 7 Tourn Games Played: 2&quot;                  
+## [27] &quot;Kansas State Wildcats_2017 Seed: 9 Tourn Games Played: 4&quot;              
+## [28] &quot;Georgia State Panthers_2017 Seed: 15 Tourn Games Played: 1&quot;            
+## [29] &quot;UMBC Retrievers_2017 Seed: 16 Tourn Games Played: 2&quot;                   
+## [30] &quot;San Diego State Aztecs_2017 Seed: 11 Tourn Games Played: 1&quot;            
+## [31] &quot;Providence Friars_2017 Seed: 10 Tourn Games Played: 1&quot;                 
+## [32] &quot;Texas Southern Tigers_2017 Seed: 16 Tourn Games Played: 2&quot;             
+## [33] &quot;Florida State Seminoles_2017 Seed: 9 Tourn Games Played: 4&quot;            
+## [34] &quot;North Carolina Central Eagles_2017 Seed: 16 Tourn Games Played: 1&quot;     
+## [35] &quot;Montana Grizzlies_2017 Seed: 14 Tourn Games Played: 1&quot;                 
+## [36] &quot;Lipscomb Bisons_2017 Seed: 15 Tourn Games Played: 1&quot;                   
+## [37] &quot;Arkansas Razorbacks_2017 Seed: 7 Tourn Games Played: 1&quot;                
+## [38] &quot;Stephen F. Austin Lumberjacks_2017 Seed: 14 Tourn Games Played: 1&quot;     
+## [39] &quot;LIU Brooklyn Blackbirds_2017 Seed: 16 Tourn Games Played: 1&quot;           
+## [40] &quot;Cal State Fullerton Titans_2017 Seed: 15 Tourn Games Played: 1&quot;        
+## [41] &quot;West Virginia Mountaineers_2017 Seed: 5 Tourn Games Played: 3&quot;         
+## [42] &quot;Marshall Thundering Herd_2017 Seed: 13 Tourn Games Played: 2&quot;          
+## [43] &quot;St. Bonaventure Bonnies_2017 Seed: 11 Tourn Games Played: 2&quot;           
+## [44] &quot;Virginia Tech Hokies_2017 Seed: 8 Tourn Games Played: 1&quot;               
+## [45] &quot;Butler Bulldogs_2017 Seed: 10 Tourn Games Played: 2&quot;                   
+## [46] &quot;Troy Trojans_2016 Seed: 15 Tourn Games Played: 1&quot;                      
+## [47] &quot;East Tennessee State Buccaneers_2016 Seed: 13 Tourn Games Played: 1&quot;   
+## [48] &quot;Mount St. Mary&#39;s Mountaineers_2016 Seed: 16 Tourn Games Played: 2&quot;     
+## [49] &quot;Virginia Tech Hokies_2016 Seed: 9 Tourn Games Played: 1&quot;               
+## [50] &quot;Marquette Golden Eagles_2016 Seed: 10 Tourn Games Played: 1&quot;           
+## [51] &quot;New Orleans Privateers_2016 Seed: 16 Tourn Games Played: 1&quot;            
+## [52] &quot;North Carolina-Wilmington Seahawks_2016 Seed: 12 Tourn Games Played: 1&quot;
+## [53] &quot;Iowa State Cyclones_2016 Seed: 5 Tourn Games Played: 2&quot;                
+## [54] &quot;Iona Gaels_2016 Seed: 14 Tourn Games Played: 1&quot;                        
+## [55] &quot;UC Davis Aggies_2016 Seed: 16 Tourn Games Played: 2&quot;                   
+## [56] &quot;Creighton Bluejays_2016 Seed: 6 Tourn Games Played: 1&quot;                 
+## [57] &quot;Oklahoma State Cowboys_2016 Seed: 10 Tourn Games Played: 1&quot;            
+## [58] &quot;North Dakota Fighting Hawks_2016 Seed: 15 Tourn Games Played: 1&quot;       
+## [59] &quot;Bucknell Bison_2016 Seed: 13 Tourn Games Played: 1&quot;                    
+## [60] &quot;West Virginia Mountaineers_2016 Seed: 4 Tourn Games Played: 3&quot;         
+## [61] &quot;Dayton Flyers_2016 Seed: 7 Tourn Games Played: 1&quot;                      
+## [62] &quot;Northern Kentucky Norse_2016 Seed: 15 Tourn Games Played: 1&quot;           
+## [63] &quot;Kansas State Wildcats_2016 Seed: 11 Tourn Games Played: 2&quot;             
+## [64] &quot;Winthrop Eagles_2016 Seed: 13 Tourn Games Played: 1&quot;                   
+## [65] &quot;Kent State Golden Flashes_2016 Seed: 14 Tourn Games Played: 1&quot;         
+## [66] &quot;Wake Forest Demon Deacons_2016 Seed: 11 Tourn Games Played: 1&quot;         
+## [67] &quot;Texas Southern Tigers_2016 Seed: 16 Tourn Games Played: 1&quot;             
+## [68] &quot;Green Bay Phoenix_2015 Seed: 14 Tourn Games Played: 1&quot;                 
+## [69] &quot;Oregon State Beavers_2015 Seed: 7 Tourn Games Played: 1&quot;               
+## [70] &quot;North Carolina-Wilmington Seahawks_2015 Seed: 13 Tourn Games Played: 1&quot;
+## [71] &quot;Cal State Bakersfield Roadrunners_2015 Seed: 15 Tourn Games Played: 1&quot; 
+## [72] &quot;Iona Gaels_2015 Seed: 13 Tourn Games Played: 1&quot;                        
+## [73] &quot;Hampton Pirates_2015 Seed: 16 Tourn Games Played: 1&quot;                   
+## [74] &quot;UNC Asheville Bulldogs_2015 Seed: 15 Tourn Games Played: 1&quot;            
+## [75] &quot;Buffalo Bulls_2015 Seed: 14 Tourn Games Played: 1&quot;                     
+## [76] &quot;Austin Peay Governors_2015 Seed: 16 Tourn Games Played: 1&quot;             
+## [77] &quot;West Virginia Mountaineers_2014 Seed: 5 Tourn Games Played: 3&quot;         
+## [78] &quot;Manhattan Jaspers_2014 Seed: 16 Tourn Games Played: 1&quot;                 
+## [79] &quot;Robert Morris Colonials_2014 Seed: 16 Tourn Games Played: 2&quot;           
+## [80] &quot;Arkansas Razorbacks_2014 Seed: 5 Tourn Games Played: 2&quot;                
+## [81] &quot;BYU Cougars_2014 Seed: 11 Tourn Games Played: 1&quot;                       
+## [82] &quot;Belmont Bruins_2014 Seed: 15 Tourn Games Played: 1&quot;                    
+## [1] &quot; &quot;
+## [1] &quot;Teams in Cluster  4&quot;
+##  [1] &quot;North Carolina Tar Heels_2018 Seed: 1 Tourn Games Played: 3&quot;       
+##  [2] &quot;Houston Cougars_2018 Seed: 3 Tourn Games Played: 3&quot;                
+##  [3] &quot;Utah State Aggies_2018 Seed: 8 Tourn Games Played: 1&quot;              
+##  [4] &quot;Wofford Terriers_2018 Seed: 7 Tourn Games Played: 2&quot;               
+##  [5] &quot;New Mexico State Aggies_2018 Seed: 12 Tourn Games Played: 1&quot;       
+##  [6] &quot;Kentucky Wildcats_2018 Seed: 2 Tourn Games Played: 4&quot;              
+##  [7] &quot;Buffalo Bulls_2018 Seed: 6 Tourn Games Played: 2&quot;                  
+##  [8] &quot;Nevada Wolf Pack_2018 Seed: 7 Tourn Games Played: 1&quot;               
+##  [9] &quot;Gonzaga Bulldogs_2018 Seed: 1 Tourn Games Played: 4&quot;               
+## [10] &quot;Murray State Racers_2018 Seed: 12 Tourn Games Played: 2&quot;           
+## [11] &quot;Yale Bulldogs_2018 Seed: 14 Tourn Games Played: 1&quot;                 
+## [12] &quot;Duke Blue Devils_2018 Seed: 1 Tourn Games Played: 4&quot;               
+## [13] &quot;Belmont Bruins_2018 Seed: 11 Tourn Games Played: 2&quot;                
+## [14] &quot;Michigan State Spartans_2018 Seed: 2 Tourn Games Played: 5&quot;        
+## [15] &quot;LSU Tigers_2018 Seed: 3 Tourn Games Played: 3&quot;                     
+## [16] &quot;Tennessee Volunteers_2018 Seed: 2 Tourn Games Played: 3&quot;           
+## [17] &quot;Michigan State Spartans_2017 Seed: 3 Tourn Games Played: 2&quot;        
+## [18] &quot;Duke Blue Devils_2017 Seed: 2 Tourn Games Played: 4&quot;               
+## [19] &quot;New Mexico State Aggies_2017 Seed: 12 Tourn Games Played: 1&quot;       
+## [20] &quot;Kansas Jayhawks_2017 Seed: 1 Tourn Games Played: 5&quot;                
+## [21] &quot;TCU Horned Frogs_2017 Seed: 6 Tourn Games Played: 1&quot;               
+## [22] &quot;Cincinnati Bearcats_2017 Seed: 2 Tourn Games Played: 2&quot;            
+## [23] &quot;Arizona Wildcats_2017 Seed: 4 Tourn Games Played: 1&quot;               
+## [24] &quot;Buffalo Bulls_2017 Seed: 13 Tourn Games Played: 2&quot;                 
+## [25] &quot;Creighton Bluejays_2017 Seed: 8 Tourn Games Played: 1&quot;             
+## [26] &quot;Nevada Wolf Pack_2017 Seed: 7 Tourn Games Played: 3&quot;               
+## [27] &quot;Ohio State Buckeyes_2017 Seed: 5 Tourn Games Played: 2&quot;            
+## [28] &quot;North Carolina Tar Heels_2017 Seed: 2 Tourn Games Played: 2&quot;       
+## [29] &quot;Gonzaga Bulldogs_2017 Seed: 4 Tourn Games Played: 3&quot;               
+## [30] &quot;South Dakota State Jackrabbits_2017 Seed: 12 Tourn Games Played: 1&quot;
+## [31] &quot;Xavier Musketeers_2017 Seed: 1 Tourn Games Played: 2&quot;              
+## [32] &quot;Murray State Racers_2017 Seed: 12 Tourn Games Played: 1&quot;           
+## [33] &quot;Purdue Boilermakers_2017 Seed: 2 Tourn Games Played: 3&quot;            
+## [34] &quot;Villanova Wildcats_2017 Seed: 1 Tourn Games Played: 6&quot;             
+## [35] &quot;Wichita State Shockers_2017 Seed: 4 Tourn Games Played: 1&quot;         
+## [36] &quot;New Mexico State Aggies_2016 Seed: 14 Tourn Games Played: 1&quot;       
+## [37] &quot;Villanova Wildcats_2016 Seed: 1 Tourn Games Played: 2&quot;             
+## [38] &quot;Kansas Jayhawks_2016 Seed: 1 Tourn Games Played: 4&quot;                
+## [39] &quot;Oregon Ducks_2016 Seed: 3 Tourn Games Played: 5&quot;                   
+## [40] &quot;Nevada Wolf Pack_2016 Seed: 12 Tourn Games Played: 1&quot;              
+## [41] &quot;Purdue Boilermakers_2016 Seed: 4 Tourn Games Played: 3&quot;            
+## [42] &quot;Florida State Seminoles_2016 Seed: 3 Tourn Games Played: 2&quot;        
+## [43] &quot;Virginia Commonwealth Rams_2016 Seed: 10 Tourn Games Played: 1&quot;    
+## [44] &quot;Florida Gulf Coast Eagles_2016 Seed: 14 Tourn Games Played: 1&quot;     
+## [45] &quot;Gonzaga Bulldogs_2016 Seed: 1 Tourn Games Played: 6&quot;               
+## [46] &quot;Kentucky Wildcats_2016 Seed: 2 Tourn Games Played: 4&quot;              
+## [47] &quot;Wichita State Shockers_2016 Seed: 10 Tourn Games Played: 2&quot;        
+## [48] &quot;Oregon Ducks_2015 Seed: 1 Tourn Games Played: 4&quot;                   
+## [49] &quot;Texas A&amp;M Aggies_2015 Seed: 3 Tourn Games Played: 3&quot;               
+## [50] &quot;Oklahoma Sooners_2015 Seed: 2 Tourn Games Played: 5&quot;               
+## [51] &quot;Yale Bulldogs_2015 Seed: 12 Tourn Games Played: 2&quot;                 
+## [52] &quot;Iowa State Cyclones_2015 Seed: 4 Tourn Games Played: 3&quot;            
+## [53] &quot;Gonzaga Bulldogs_2015 Seed: 11 Tourn Games Played: 3&quot;              
+## [54] &quot;Utah Utes_2015 Seed: 3 Tourn Games Played: 2&quot;                      
+## [55] &quot;Kansas Jayhawks_2015 Seed: 1 Tourn Games Played: 4&quot;                
+## [56] &quot;Hawaii Warriors_2015 Seed: 13 Tourn Games Played: 2&quot;               
+## [57] &quot;Villanova Wildcats_2015 Seed: 2 Tourn Games Played: 6&quot;             
+## [58] &quot;North Carolina Tar Heels_2015 Seed: 1 Tourn Games Played: 6&quot;       
+## [59] &quot;Xavier Musketeers_2015 Seed: 2 Tourn Games Played: 2&quot;              
+## [60] &quot;Stony Brook Seawolves_2015 Seed: 13 Tourn Games Played: 1&quot;         
+## [61] &quot;Kentucky Wildcats_2014 Seed: 1 Tourn Games Played: 5&quot;              
+## [62] &quot;Gonzaga Bulldogs_2014 Seed: 2 Tourn Games Played: 4&quot;               
+## [63] &quot;Iowa State Cyclones_2014 Seed: 3 Tourn Games Played: 1&quot;            
+## [64] &quot;Stephen F. Austin Lumberjacks_2014 Seed: 12 Tourn Games Played: 1&quot; 
+## [65] &quot;North Carolina Tar Heels_2014 Seed: 4 Tourn Games Played: 3&quot;       
+## [66] &quot;Ohio State Buckeyes_2014 Seed: 10 Tourn Games Played: 2&quot;           
+## [67] &quot;Villanova Wildcats_2014 Seed: 1 Tourn Games Played: 2&quot;             
+## [1] &quot; &quot;</code></pre>
+<p><img src="cluster_analysis_files/figure-html/k-means-5.png" width="672" /><img src="cluster_analysis_files/figure-html/k-means-6.png" width="672" /></p>
+</div>
+
+
+
+
+</div>
+
+<script>
+
+// add bootstrap table styles to pandoc tables
+function bootstrapStylePandocTables() {
+  $('tr.odd').parent('tbody').parent('table').addClass('table table-condensed');
+}
+$(document).ready(function () {
+  bootstrapStylePandocTables();
+});
+
+
+</script>
+
+<!-- tabsets -->
+
+<script>
+$(document).ready(function () {
+  window.buildTabsets("TOC");
+});
+
+$(document).ready(function () {
+  $('.tabset-dropdown > .nav-tabs > li').click(function () {
+    $(this).parent().toggleClass('nav-tabs-open')
+  });
+});
+</script>
+
+<!-- code folding -->
+
+
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+  (function () {
+    var script = document.createElement("script");
+    script.type = "text/javascript";
+    script.src  = "https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML";
+    document.getElementsByTagName("head")[0].appendChild(script);
+  })();
+</script>
+
+</body>
+</html>

@@ -7,62 +7,6 @@ output: html_document
 knitr::opts_chunk$set(echo = TRUE)
 ```
 
-```{r loaddata, include = FALSE}
-# Read in my data from the local csv file I created
-TD <- read.csv("allteams_augmented_newest.csv", header = T, stringsAsFactors = FALSE)
-
-# Make a vector of all variables from the data
-allallvars <- c("id", "name", "year", "conference", "conference_filtered", 
-             "conference_type","conference_type_num", "tourn_bid", "tourn_bid_num", 
-             "seed", "seed_type", "seed_type_num", "fast_break_pts", 
-             "points_off_turnovers", "second_chance_pts", "minutes", "points", 
-             "off_rebounds", "def_rebounds", "rebounds", "assists", "steals", "blocks", 
-             "turnovers", "personal_fouls", "flagrant_fouls", "blocked_att", 
-             "field_goals_made", "field_goal_pct", "field_goals_att", "three_points_made",
-             "three_points_pct", "three_points_att", "free_throws_made",
-             "free_throws_pct", "free_throws_att", "two_points_made", "two_points_pct",
-             "two_points_att", "points_in_paint", "efficiency", "true_shooting_att",
-             "true_shooting_pct", "opp_fast_break_pts", "opp_points_off_turnovers",
-             "opp_second_chance_pts", "opp_minutes", "opp_points", "opp_off_rebounds", 
-             "opp_def_rebounds", "opp_rebounds", "opp_assists", "opp_steals", 
-             "opp_blocks", "opp_turnovers", "opp_personal_fouls", 
-             "opp_flagrant_fouls", "opp_blocked_att", "opp_field_goals_made", 
-             "opp_field_goal_pct", "opp_field_goals_att", "opp_three_points_made", 
-             "opp_three_points_pct", "opp_three_points_att", "opp_free_throws_made", 
-             "opp_free_throws_pct", "opp_free_throws_att", "opp_two_points_made", 
-             "opp_two_points_pct", "opp_two_points_att", "opp_points_in_paint", 
-             "opp_efficiency", "opp_true_shooting_att", "opp_true_shooting_pct", 
-             "tourn_games_played", "tourn_games_played_num", "log_tourn_games_played", 
-             "log2_tourn_games_played", "tourn_fast_break_pts", 
-             "tourn_points_off_turnovers", "tourn_second_chance_pts", "tourn_minutes", 
-             "tourn_points", "tourn_off_rebounds", "tourn_def_rebounds", 
-             "tourn_rebounds", "tourn_assists", "tourn_steals", "tourn_blocks", 
-             "tourn_turnovers", "tourn_personal_fouls", "tourn_flagrant_fouls", 
-             "tourn_blocked_att", "tourn_field_goals_made", "tourn_field_goal_pct", 
-             "tourn_field_goals_att", "tourn_three_points_made", 
-             "tourn_three_points_pct", "tourn_three_points_att", 
-             "tourn_free_throws_made", "tourn_free_throws_pct", 
-             "tourn_free_throws_att", "tourn_two_points_made", "tourn_two_points_pct", 
-             "tourn_two_points_att", "tourn_points_in_paint", "tourn_efficiency",
-             "tourn_true_shooting_att", "tourn_opp_fast_break_pts", 
-             "tourn_opp_points_off_turnovers", "tourn_opp_second_chance_pts", 
-             "tourn_opp_minutes", "tourn_opp_points", "tourn_opp_off_rebounds", 
-             "tourn_opp_def_rebounds", "tourn_opp_rebounds", "tourn_opp_assists", 
-             "tourn_opp_steals", "tourn_opp_blocks", "tourn_opp_turnovers", 
-             "tourn_opp_personal_fouls", "tourn_opp_flagrant_fouls", 
-             "tourn_opp_blocked_att", "tourn_opp_field_goals_made", 
-             "tourn_opp_field_goal_pct", "tourn_opp_field_goals_att", 
-             "tourn_opp_three_points_made", "tourn_opp_three_points_pct", 
-             "tourn_opp_three_points_att", "tourn_opp_free_throws_made", 
-             "tourn_opp_free_throws_pct", "tourn_opp_free_throws_att", 
-             "tourn_opp_two_points_made", "tourn_opp_two_points_pct", 
-             "tourn_opp_two_points_att", "tourn_opp_points_in_paint", 
-             "tourn_opp_efficiency", "tourn_opp_true_shooting_att", 
-             "tourn_point_diff", "wins", "win_pct", "losses", "home_wins", 
-             "home_win_pct", "home_losses", "away_wins", "away_wins_pct", 
-             "away_losses", "neut_wins", "neut_win_pct", "neut_losses", 
-             "owp", "oowp", "awp", "sos", "rpi")
-```
 ![alt text here](tourn2019.jpg)
 \bigbreak
 One of the most popular annual sporting events, the NCAA Division I Men's Basketball Tournament---better known by its colloquial nickname March Madness---is also one of the most scrutinized. This single-elimination tournament was created in 1939 by the National Association of Basketball Coaches and has been played every year since. Currently, it features 64 of the nation's best college basketball teams (68 including the play-in games) and hence is comprised of six rounds, known as: the First Round (or Round of 64), the Second Round (or Round of 32), the Sweet Sixteen, the Elite Eight, the Final Four, and the Championship. Furthermore, it is divided into four regions, each of which has teams seeded from 1 to 16, where 1 seeds are most favored and 16 seeds are the biggest underdogs. The tournament teams include champions from 32 Division I conferences, who receive automatic bids, and 36 teams chosen by the NCAA selection committee, who receive at-large bids.

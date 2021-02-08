@@ -11,7 +11,7 @@
 
 
 
-<title>Introduction</title>
+<title>Design</title>
 
 <script src="site_libs/header-attrs-2.6/header-attrs.js"></script>
 <script src="site_libs/jquery-1.11.3/jquery.min.js"></script>
@@ -321,13 +321,54 @@ $(document).ready(function () {
 
 
 
-<h1 class="title toc-ignore">Introduction</h1>
+<h1 class="title toc-ignore">Design</h1>
 
 </div>
 
 
-<p><img src="tourn2019.jpg" alt="alt text here" />  One of the most popular annual sporting events, the NCAA Division I Men’s Basketball Tournament—better known by its colloquial nickname March Madness—is also one of the most scrutinized. This single-elimination tournament was created in 1939 by the National Association of Basketball Coaches and has been played every year since. Currently, it features 64 of the nation’s best college basketball teams (68 including the play-in games) and hence is comprised of six rounds, known as: the First Round (or Round of 64), the Second Round (or Round of 32), the Sweet Sixteen, the Elite Eight, the Final Four, and the Championship. Furthermore, it is divided into four regions, each of which has teams seeded from 1 to 16, where 1 seeds are most favored and 16 seeds are the biggest underdogs. The tournament teams include champions from 32 Division I conferences, who receive automatic bids, and 36 teams chosen by the NCAA selection committee, who receive at-large bids.</p>
-<p>As a predictive exercise with a huge amount of data on each team, it is quite natural to apply multivariate statistics to the NCAAM Basketball Tournament. While notoriously random and unexpected, there are significant patterns across the years, and this study aims to uncover and illustrate some of these trends. Using a variety of statistical methods, it attempts to break down and demystify ideas like favorites, busts, upsets, Cinderella teams, and more, with the ultimate goal of being able to predict tournament success given a team’s regular season performance and tournament seed. The results of this study may not be able to predict a perfect bracket, but they will get us one step closer to that goal.</p>
+<p>As part of its investigation into March Madness, this study will consider several core questions, each of which corresponds to one or several multivariate statistical methods and all of which pertain to predictions for the NCAAM Basketball Tournament bracket. Outlining these principal questions and the corresponding statistical methods, we have:</p>
+<ol style="list-style-type: decimal">
+<li>What team statistics tend to correlate with each other and with different levels of tournament success?
+<ul>
+<li><strong>Principal components analysis (PCA):</strong> allows us to take a large set of variables and reduce the dimensionality by identifying directions in which most of the variability occurs. In essence, we will be able to conglomerate a set of <span class="math inline">\(p\)</span> team statistics into a few <span class="math inline">\(p\)</span>-dimensional composite variables. To do so, we will use the following techniques/statistics:
+<ul>
+<li>A correlation matrix/plot of our variables to confirm strong enough relationships for dimensional reduction</li>
+<li>Principal component eigenvalues and proportion of variance to determine the significance of each component</li>
+<li>A scree plot and parallel analysis to determine how many principal components to keep/consider</li>
+<li>The loadings of the chosen components to determine what initial variables contribute to the composite directions</li>
+</ul></li>
+<li><strong>Factor analysis:</strong> serves a similar purpose to principal component analysis but aims instead to find latent factors leading to the correlations between our variables (now referred to as indicators). This will allow us to “tell a nice story” about a few composite variables of team statistics. To do so, we will leverage the following techniques/statistics:
+<ul>
+<li>The Kaiser-Meyer-Olkin measure of adequacy to ensure the viability of our data for factor analysis</li>
+<li>PCA to determine the number of latent factors to start with</li>
+<li>Principal axis factoring (PAF) and maximum likelihood factoring to estimate the communalities (i.e. the variance due to a given common factor)</li>
+<li>A varimax rotation so that each indicator has a high loading on one and only one factor</li>
+</ul></li>
+</ul></li>
+<li>How do different seeds perform and what about these seed groups leads to different levels of performance in the tournament?
+<ul>
+<li><strong>Ordination:</strong> allows us to create low-dimensional plots which represent our high-dimensional team data. This enables us to investigate the relationships between seeds and tournament round reached, while also overlaying some continuous statistics. To do so, we will apply the following techniques/statistics:
+<ul>
+<li>Correspondence analysis to create two-dimensional plots representing the relationships between these groups in “inertia space”</li>
+<li>Non-metric multi-dimensional scaling to find low-dimensional (2 and 3 dimensions) representations of the groups that “nearly match” the original similarities/distances between them in higher space</li>
+<li>Overlay both linear vectors and contour lines representing how our continuous variables relate to the groupings in space</li>
+</ul></li>
+</ul></li>
+<li>Can we use a subset of variables to categorize teams into different groups? And once we do, can we use these groups to predict tournament success?
+<ul>
+<li><strong>Cluster analysis:</strong> allows us to create clusters of teams with similar measured statistics that are differentiated from the other clusters. Thus, we can look at which teams over time have been similar to each other and how these groupings predicted success. To do so, we will employ the following techniques/statistics:
+<ul>
+<li>Hierarchical clustering to give us tree-like dendrograms representing the relationships between the various teams, using the following distance metrics and conglomeration methods
+<ul>
+<li>Euclidean distance and complete linkage to provide the largest and most general results</li>
+<li>Manhattan distance and complete linkage to try a different distance metric and create more detailed groups</li>
+<li>Euclidean distance and single linkage to determine outlier teams</li>
+</ul></li>
+<li>K-means cluster analysis to provide quick and clear clusters of a large amount of teams over multiple years</li>
+</ul></li>
+</ul></li>
+</ol>
+<p>By combining all these methods, we will be able to get many different perspectives on our data and hence create a holistic view of potential keys to tournament success.</p>
 
 
 

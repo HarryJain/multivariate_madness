@@ -1,0 +1,181 @@
+---
+title: "Factor Analysis"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+```{r loaddata, include = FALSE}
+source("load_data.R")
+```
+
+As our first multivariate analysis method, we will use factor analysis to identify underlying factors causing correlations between our various statistics. We will consider the suitability of the data, determine an appropriate number of factors using PCA, and complete factor analysis itself with principal axis factoring and a varimax rotation.
+
+## Suitability of Data and Correlations
+```{r correlation, include = FALSE}
+# Make a vector of all variables used in PCA/factor analysis and the interpretations
+#   (visually divided into the following categories: regular season team statistics, 
+#   regular season opponent statistics, regular season composite statistics,
+#   general tournament statistics, tournament team statistics, 
+#   tournament opponent statistics)
+vars.var <- c("name", "efficiency", "true_shooting_pct", "points", "assists",   
+              "points_in_paint", "second_chance_pts", "blocked_att", "personal_fouls",
+              "flagrant_fouls",
+              
+              "opp_true_shooting_pct", "opp_points", "opp_assists", "opp_points_in_paint", 
+              "opp_fast_break_pts", "opp_blocked_att", "opp_personal_fouls", 
+              "opp_flagrant_fouls",
+              
+              "rpi", "sos", "owp",
+              
+              "seed", "tourn_bid_num", "conference_type_num", "log_tourn_games_played",
+              "tourn_point_diff", 
+              
+              "tourn_points", "tourn_assists",  
+              "tourn_fast_break_pts", "tourn_second_chance_pts",
+              "tourn_personal_fouls", "tourn_flagrant_fouls", "tourn_blocked_att",
+              
+              "tourn_opp_efficiency", "tourn_opp_field_goal_pct", "tourn_opp_points", 
+              "tourn_opp_assists", "tourn_opp_points_in_paint", 
+              "tourn_opp_blocked_att", "tourn_opp_personal_fouls", "tourn_opp_flagrant_fouls")
+
+# Get a subset of the data based on the chosen variables
+TD.var <- TD[, vars.var]
+
+# Remove any teams with incomplete data (some of the older tournament teams lack 
+#   more composite statistics)
+TD.var <- TD.var[complete.cases(TD.var), ]
+
+# Output the number of rows and columns
+#dim(TD.var)
+
+# List the variables chosen for factor analysis
+#names(TD.var)
+
+# Calculate and print Kaiser-Meyer-Olkin measure of adequacy
+kmo <- paf(as.matrix(TD.var[, -1]))$KMO
+
+# Make a correlation matrix to see how well factor analysis will work, 
+#   remove column of team names
+correlations <- round(cor(TD.var[, -1]), 2)
+```
+
+First, to use our data for factor analysis, we must remove all non-numerical values like team name and conferece. Then, to confirm the suitability of our data for factor analysis, we will consider the pairwise correlations between variables. Looking at the raw correlations (the bottom left of the correlation plot), these variables may initially seem too uncorrelated, with a large percentage of the values around $0.1$ and $0.2$. However, we still see a fair amount of high correlations such as the $0.89$ correlation between efficiency and points. This makes sense, as offensive efficiency probably leads to more points, and vice versa (in fact, points scored is a part of the calculation for the offensive efficiency statistic). Most of the high and medium correlations are similarly logical but can still lead to interesting conclusions, such as the $0.47$ correlation between flagrant fouls and opponent flagrant fouls (an unfortunate reflection of vengeance between aggressive teams). On the other hand, some of them are less expected and maybe even unexplainable, like the $-0.77$ correlation between opponent blocked attempts and seed.
+
+```{r corrmatrrix, include = FALSE}
+pander(as.data.frame(correlations), justify = "left")
+```
+
+While the raw correlation plot may be slightly concerning for factor analysis, a look at the visual correlation plot demonstrates a reasonable level of viability for dimensional reduction techniques. We see clusters of very high correlations, implying a high level of suitability for factor analysis, as each group probably has a latent factor driving these correlations. Furthermore, there are a few potentially unexpected relationships, like the high correlation between points and opponent points; thus, our factor analysis could still be exploratory in the sense of discovering new patterns beyond those previously hypothesized. This apparent viability is confirmed by our Kaiser-Meyer-Olkin measure of adequacy, which is approximately $0.80$. According to our spectrum from class, this is squarely in the "Meritorious" region and hence implies our data is very suitable for factor analysis. Notably, achieving this value took a good deal of experimenting in terms of the chosen indicators---it was initially in the "Miserable" category and feeling quite inadequate :(---but was not achieved by any unreasonable inclusions; instead, it just forced our data into a large, comprehensive set of variables.
+
+```{r corrplot, echo = FALSE, fig.align = "center"}
+# Output expanded correlation plot with colored ellipses and
+#   numeric representations of correlations (relatively high
+#   correlations between several clusters of variables)
+corrplot.mixed(cor(TD.var[, -1]), lower.col = "black", upper = "ellipse",
+               tl.col = "black", number.cex = 0.2, order = "hclust",
+               tl.pos = "lt", tl.cex = 0.5)
+```
+
+## Principal Components Analysis
+```{r pca, echo = FALSE}
+# Perform PCA using the correlation matrix, which gives us loadings, 
+#   perentage of variance (eigenvalues), etc.
+pc1 <- princomp(TD.var[, -1], cor = TRUE)
+```
+
+As the first step of our factor analysis, we will use principal components to determine an appropriate number of latent factors. While we use different methods to categorize our data in the factor analyses below, PCA will still give us a good idea of how many dimensions are needed to capture the variability of our data. 
+
+To start, we perform the process of PCA using the *princomp* function on the correlation matrix. Printing out the summary of results, we see that the first $5$ components have eigenvalues substantially over $1$ and encompass about $63\%$ of the total variance, with the following components/eigenvalues ($6$-$11$) hovering around $1$ and raising the cumulative variance proportion to about $80\%$. Choosing the number of components to keep is quite difficult due to this flattening out at relatively high eigenvalues, so we will also consider other methods.
+
+```{r pcaresults, echo = FALSE}
+# Print the results of the PCA
+print(summary(pc1), digits = 2, cutoff = 0)
+#pander(as.data.frame(summary(pc1)[1]), justify = "left")
+#summary(pc1)
+
+# Output the eigenvalues/variances of the principal components
+cat("Eigenvalues")
+round(pc1$sdev^2, 2)
+eigenvalues <- as.data.frame(round(pc1$sdev^2, 2))
+colnames(eigenvalues) <- "Eigenvalues"
+#pander(round(pc1$sdev^2, 2), justify = "left", caption = "Eigenvalues")
+
+#pander(summary(pc1))
+
+#pander(as.data.frame(summary(pc1)[1]), justify = "left")
+```
+
+To clarify our results, we will make a scree plot of our principal components and overlay the Longman and Allen method values for parallel analysis. Following the pattern we observed directly, the scree plot flattens out after the $6$th principal component. This is also where it dips below the Longman and Allen method values, so this seems to be the most reasonable cutoff point. As a result we will keep $5$ principal components and thus look for $5$ latent factors in our factor analysis. Conveniently, this is a much more substantial and useful reduction in dimension compared to keeping $10$ or $11$ components, so we will be able to more easily plot and interpret our factor analysis results.
+
+```{r parallelplot, echo = FALSE}
+# Get the parallelplot function from Jonathon's website
+source("http://www.reuningscherer.net/STAT660/R/parallel.r.txt")
+
+# Make the parallel analysis plot for our PCA
+parallelplot(pc1)
+```
+
+Now, looking at the loadings for these first $5$ components, most of them are quite low, and there are no strong interpretations of the components overall. However, the first component is vaguely focused on composite variables like RPI and strength of schedule, representing overall team quality. Meanwhile, the second component has highest loadings on opponent tournament statistics, implying good tournament competition (probably due to a low seed or a long tournament run). The third component is seemingly a measure of offensive efficiency, while the fourth and fifth components are very opaque. Overall, while not overly useful or definitive, these PCA results imply that our factor analysis, which does a similar dimensional reduction with rotations to produce a "nice story," will yield insightful results.
+
+```{r components, echo = FALSE}
+pander(as.data.frame(pc1$loadings[, 1:5]), justify = "left")
+```
+
+## Extraction Techniques and Rotations
+Moving on to the actual factor analysis, we will use the *fa* library function to calculate these factors and print out several metrics for gauging the success of the analysis, including the proportion of residual values greater than $0.05$, the RMS statistic, and a measure how well the factor model reproduces the correlation matrix. Then, it prints out the loadings of each factor for interpretation. Finally, it prints out two plots: a two-dimensional plot along the first two factors (those with the highest proportion of variance) and a three-dimensional plot along the other three factors (as the “remainder” terms). In this case, we will try non-iterative principal axis factoring (PAF) and maximum likelihood factoring as our extraction techniques. We will choose PAF for further analysis because it has approximately the same residual proportion (about $0.19$), lower RMS (about $0.04$ versus about $0.05$), and higher fit ($0.93$ versus $0.90$). This implies that this PAF better reproduces the true correlation matrix (though they are very similar). Then, we will use a varimax rotation so that each indicator has a high loading on one and only one factor. This combination will give us the clearest results. 
+
+Starting with our two-dimensional plot, we see very strong separation between factors, with almost all the variation occuring along one of the two axes. Similarly, the three-dimensional plot of the other factors also has clear and logical groupings (e.g. regular season offense, tournament defense, etc.) with some interesting proximities between them (e.g. tournament success being close to regular season defense). We can clearly see the rotation taking effect, as the "squareness" of the patterns with respect to the axes is very strong. Investigating the loadings, they mirror those of PCA, with every component exaggerated and clarified; thus, these rotations were very successful in producing our desired "nice story." The first factor is now clearly a measure of overall team ability, while also being the strongest predictor of tournament success. The second factor is strongly reflective of tournament defense but not really regular season defense, probably due to smaller conference teams who face much tougher competition in the tournament than in the regular season. The third factor is now very strongly about regular season offense, with some reflection of tournament offense and overall success as well. The fourth factor is still the most vague but now has the highest loadings on regular season defense. Finally, the fifth factor is seemingly a measure of aggression, which interestingly correlates negatively with tournament success.
+
+In terms of overall conclusions, the most prominent and interesting was probably the connection between regular season ratings, namely RPI and strength of schedule, and tournament success. Additionally, the inclusion of the “aggression” factor was very interesting, with the negative correlation to tournament success perhaps reflecting the more controlled, offensive game of modern times. In summary, these factors are probably best described by: overall team quality (regular season and tournament success), tournament defensive efficiency, offensive efficiency, regular season defensive efficiency, and aggression. Among these, regular season defensive efficiency and aggression are definitely the weakest and could possibly be left out.
+
+```{r factor, echo = FALSE, warning = FALSE}
+# MLE factor analysis with varimax rotation
+fact.MLE <- fa(TD.var[, -1], nfactors = 5, fm = "ml", residuals = TRUE, 
+             SMC = TRUE, rotate = "varimax")
+cat("\n")
+cat("Fit statistics for Maximum Likelihood")
+# Proportion of residuals greater than 0.05
+cat("Proportion of residuals greater than 0.05")
+cat(length(fact.MLE$residual[which(abs(fact.MLE$residual) > 0.05)]) / length(fact.MLE$residual))
+# Root mean square residual statistic
+cat("RMS")
+cat(fact.MLE$rms)
+# A measure of how well the factor model reproduces the correlation matrix
+cat("Fit of how well the factor model reproduces the correlation matrix")
+cat(fact.MLE$fit)
+
+# PAF factor analysis with varimax rotation
+fact <- fa(TD.var[, -1], nfactors = 5, fm = "pa", residuals = TRUE, 
+             SMC = TRUE, rotate = "varimax")
+cat("Fit statistics for PAF")
+# Proportion of residuals greater than 0.05
+cat("Proportion of residuals greater than 0.05")
+cat(length(fact$residual[which(abs(fact$residual) > 0.05)]) / length(fact$residual))
+# Root mean square residual statistic
+cat("RMS")
+cat(fact$rms)
+# A measure of how well the factor model reproduces the correlation matrix
+cat("Fit of how well the factor model reproduces the correlation matrix")
+cat(fact$fit)
+cat("Matrix of loadings for each factor")
+# Matrix of loadings for each factor
+pander(as.data.frame(fact$loadings[]), justify = "left")
+
+# Plot factor analysis in first two factor dimensions
+cat("Plot factor analysis in two dimensions")
+plot(fact$loadings, pch = NA, xlab = "PA1", ylab = "PA2")
+abline(h = 0)
+abline(v = 0)
+text(fact$loadings, labels = names(TD.var), cex = 0.8, col = gg.col(n = 39))
+  
+# Plot factor analysis results in the other three factor dimensions
+cat("Plot factor analysis in three dimensions")
+s3d <- scatterplot3d(x = fact$loadings[, c(3)], y = fact$loadings[, c(4)], 
+                     z = fact$loadings[, c(5)], pch = NA, xlab = "PA3", 
+                     ylab = "PA4", zlab = "PA5")
+text(s3d$xyz.convert(fact$loadings[, c(1:3)]), cex = 0.5, labels = vars[-1], 
+     col = gg.col(n = 39))
+```

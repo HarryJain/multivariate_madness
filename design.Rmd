@@ -1,0 +1,36 @@
+---
+title: "Design"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+As part of its investigation into March Madness, this study will consider several core questions, each of which corresponds to one or several multivariate statistical methods and all of which pertain to predictions for the NCAAM Basketball Tournament bracket. Outlining these principal questions and the corresponding statistical methods, we have:
+
+1. What team statistics tend to correlate with each other and with different levels of tournament success?
+    + **Principal components analysis (PCA):** allows us to take a large set of variables and reduce the dimensionality by identifying directions in which most of the variability occurs. In essence, we will be able to conglomerate a set of $p$ team statistics into a few $p$-dimensional composite variables. To do so, we will use the following techniques/statistics:
+      + A correlation matrix/plot of our variables to confirm strong enough relationships for dimensional reduction
+      + Principal component eigenvalues and proportion of variance to determine the significance of each component
+      + A scree plot and parallel analysis to determine how many principal components to keep/consider
+      + The loadings of the chosen components to determine what initial variables contribute to the composite directions
+    + **Factor analysis:** serves a similar purpose to principal component analysis but aims instead to find latent factors leading to the correlations between our variables (now referred to as indicators). This will allow us to "tell a nice story" about a few composite variables of team statistics. To do so, we will leverage the following techniques/statistics:
+      + The Kaiser-Meyer-Olkin measure of adequacy to ensure the viability of our data for factor analysis
+      + PCA to determine the number of latent factors to start with
+      + Principal axis factoring (PAF) and maximum likelihood factoring to estimate the communalities (i.e. the variance due to a given common factor)
+      + A varimax rotation so that each indicator has a high loading on one and only one factor
+2. How do different seeds perform and what about these seed groups leads to different levels of performance in the tournament?
+    + **Ordination:** allows us to create low-dimensional plots which represent our high-dimensional team data. This enables us to investigate the relationships between seeds and tournament round reached, while also overlaying some continuous statistics. To do so, we will apply the following techniques/statistics:
+      + Correspondence analysis to create two-dimensional plots representing the relationships between these groups in "inertia space"
+      + Non-metric multi-dimensional scaling to find low-dimensional (2 and 3 dimensions) representations of the groups that "nearly match" the original similarities/distances between them in higher space
+      + Overlay both linear vectors and contour lines representing how our continuous variables relate to the groupings in space
+3. Can we use a subset of variables to categorize teams into different groups? And once we do, can we use these groups to predict tournament success?
+    + **Cluster analysis:** allows us to create clusters of teams with similar measured statistics that are differentiated from the other clusters. Thus, we can look at which teams over time have been similar to each other and how these groupings predicted success. To do so, we will employ the following techniques/statistics:
+      + Hierarchical clustering to give us tree-like dendrograms representing the relationships between the various teams, using the following distance metrics and conglomeration methods
+        + Euclidean distance and complete linkage to provide the largest and most general results
+        + Manhattan distance and complete linkage to try a different distance metric and create more detailed groups
+        + Euclidean distance and single linkage to determine outlier teams
+      + K-means cluster analysis to provide quick and clear clusters of a large amount of teams over multiple years
+      
+By combining all these methods, we will be able to get many different perspectives on our data and hence create a holistic view of potential keys to tournament success.

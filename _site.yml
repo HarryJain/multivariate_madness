@@ -2,15 +2,15 @@ name: "multivariate_madness"
 output_dir: "docs"
 navbar:
   title: "Multivariate Madness"
-  left:
-    - text: "Introduction"
-      href: index.html
-    - text: "Design"
-      href: design.html
-    - text: "Data"
-      href: data.html
-    - text: "Summary Statistics"
-      href: summary.html
+  right:
+    - text: "Overview"
+      menu:
+        - text: "Design"
+          href: design.html
+        - text: "Data"
+          href: data.html
+        - text: "Summary Statistics"
+          href: summary.html
     - text: "Factor Analysis"
       href: factor_analysis.html
     - text: "Ordination"
@@ -18,9 +18,13 @@ navbar:
     - text: "Cluster Analysis"
       href: cluster_analysis.html
     - text: "Conclusions"
-      href: conclusions.html
-    - text: "Final Thoughts"
-      href: acknowledgements.html
+      menu:
+        - text: "Discussion"
+          href: conclusions.html
+        - text: "Further Analysis"
+          href: further_analysis.html
+        - text: "Final Thoughts"
+          href: acknowledgements.html
 output:
   html_document:
     theme: cosmo

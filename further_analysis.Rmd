@@ -1,0 +1,19 @@
+---
+title: "Points for Further Analysis"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+Despite the aforementioned success of our study, there is always room for improvement and further investigation. In fact, this is exactly what justifies further multivariate analysis of this data. Generally, the main desired improvement would be to find more unexpected results to explain more of the tournament randomness. This could probably be done by filtering out the "noise" of similar teams who did not perform well and maybe trying to use these techniques exclusively on the teams in question (Cinderellas, busts, etc.). Additionally, we may want to look at a larger pool of teams across more years, since it is almost always good to have more variables/data to look at. However, the chosen pool of data definitely had more than enough teams to deduce trends, and the recency of teams allows for pertinent observations like the dominance of offensive statistics. Nevertheless, doing further analysis with more data would only further illustrate these results, trends, and even differences across time.
+
+## Factor Analysis
+In terms of downsides, many of the latent factors could be deduced using basic logic, and applying factor analysis in this manner does not give us any insight into the individual teams and their sources of success (like cluster analysis does). In the future, it might be informative to try different (and probably smaller) subsets of variables to yield more detailed, unexpected conclusions in fewer latent factors. However, our results were not entirely expected and hence yielded some unique interpretations. Thus, factor analysis for this NCAAM basketball data was generally a success, and looking into some alternate approaches with this technique is definitely justified in the future.
+
+## Ordination
+Similar to the results of factor analysis, a lot of the observations were trivial, namely the fact that better statistics led to low seeds and higher tournament success. However, the specific groupings of seeds, namely for the Cinderella 7/11 seeds, along with the direction of the "snaking" effects, were actually very informative. In the future, it may be interesting to look at other specific subgroups, such as successful Cinderella teams or those who were upset early in the tournament. Furthermore, this is also definitely a technique that would benefit from even more years of data (yielding larger and more representative groups). Finally, we could potentially use this technique in conjunction with the results of cluster analysis to determine relationships between the clusters. Given the insights from this analysis, ordination is also a technique worth diving deeper into for NCAAM basketball data.
+
+## Cluster Analysis
+For cluster analysis, the main limitation came in the aforementioned "noise" within each group, as almost all of them included a relatively large amount of mediocrely performing teams that did not provide much predictive power. To solve this, we may want to look at a smaller set of teams that we are really interested in (namely those that performed surprisingly, either good or bad). Also, it may also be advantageous to look at different or larger groups in hierarchial clustering (namely with single linkage), as well as to analyze the statistical properties of each cluster. Finally, we could consider adding in notable teams from other years to see which group they would fall into and consequently gauge the predictive power of our clusters. In the end, however, this study was highly successful in establishing several core properties of cluster analysis on NCAAM basketball data and thus more than justified further work on the subject.

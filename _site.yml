@@ -1,0 +1,10 @@
+name: "multivariate_madness"
+output_dir: "docs"
+navbar:
+  title: "Multivariate Madness"
+  left:
+    - text: "Introduction"
+      href: introduction.html
+output:
+  html_document:
+    theme: cosmo
